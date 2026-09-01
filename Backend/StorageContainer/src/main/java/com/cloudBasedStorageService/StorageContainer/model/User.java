@@ -10,17 +10,17 @@ import lombok.Data;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Integer userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer userId;
 
     @Column(unique = true,nullable = false)
-    public String userEmail;
+    private String userEmail;
 
-    @Column(nullable = false)
-    public String userPassword;
+    @Column(nullable = true)
+    private String userPassword;
 
     @Enumerated(EnumType.STRING)
-    public Role userRole;
+    private Role userRole;
 
 
 }

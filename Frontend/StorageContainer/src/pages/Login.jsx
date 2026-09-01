@@ -1,147 +1,288 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import '../styles/Login.css';
-import { jwtDecode } from "jwt-decode";
+import { useNavigate, Link } from "react-router-dom";
+import "../styles/Login.css";
+import api from "../services/axiosConfig";
 
+const Login = () => {
 
-function Login() {
+    const navigate = useNavigate();
 
-  const navigate = useNavigate();
-
-    const [formData, setFormData] = useState({
-        user_email: "",
-        user_password: ""
+    const [user, setUser] = useState({
+        userEmail: "",
+        userPassword: ""
     });
 
-    const [message, setMessage] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    // Handle input changes
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
+        setUser({
+            ...user,
             [e.target.name]: e.target.value
         });
+
+        setError("");
     };
 
-    const handleSubmit = async (e) => {
-
+    
+    const handleLogin = async (e) => {
         e.preventDefault();
+
+        setError("");
+        setSuccess("");
+
+       
+        if (!user.userEmail || !user.userPassword) {
+            setError("Please enter email and password.");
+            return;
+        }
+
+        setLoading(true);
 
         try {
 
-            const response = await axios.post(
+            const response = await api.post(
                 "http://localhost:8080/api/auth/login",
-                formData
+                user
             );
 
             const token = response.data;
-            localStorage.setItem("token", response.data)
-            setMessage("Login successful!");
 
-            
+            if (token) {
 
-        } catch (error) {
+                
+                localStorage.setItem("token", token);
 
-            console.error("Login error:", error);
+               
+                localStorage.setItem("userEmail", user.userEmail);
 
-            setMessage("Invalid email or password");
+                setSuccess("Login successful!");
+
+                
+                setTimeout(() => {
+                    navigate("/dashboard");
+                }, 800);
+
+            } else {
+                setError("Token was not received from server.");
+            }
+
+        } catch (err) {
+
+            console.error("Login error:", err);
+
+            if (err.response) {
+
+                if (err.response.status === 401) {
+                    setError("Invalid email or password.");
+                } else if (err.response.data?.message) {
+                    setError(err.response.data.message);
+                } else {
+                    setError("Login failed. Please try again.");
+                }
+
+            } else if (err.request) {
+                setError(
+                    "Unable to connect to the server. Please make sure Spring Boot is running."
+                );
+            } else {
+                setError("Something went wrong.");
+            }
+
+        } finally {
+            setLoading(false);
         }
+    };
+
+    // Google Login
+    const handleGoogleLogin = () => {
+
+        window.location.href =
+            "http://localhost:8080/oauth2/authorization/google";
     };
 
     return (
 
         <div className="login-page">
 
-            <div className="login-box">
+            <div className="login-card">
 
-                {/* LEFT SIDE */}
+               
 
-                <div className="login-left">
-
-                    <div className="StorageContainer-icon">
-                        📦
-                    </div>
-
-                    <h1>StorageContainer</h1>
-
-                    <p>
-                       A cloud-based file storage and sharing web application
-                    </p>
-
+                <div className="login-logo">
+                    
                 </div>
 
 
-                {/* RIGHT SIDE */}
+              
 
-                <div className="login-right">
+                <h1 className="login-title">
+                    Welcome Back
+                </h1>
 
-                    <h2>Welcome Back!</h2>
-
-                    <p className="login-subtitle">
-                        Login to continue 
-                    </p>
+                <p className="login-description">
+                    Sign in to continue to your quiz account
+                </p>
 
 
-                    <form onSubmit={handleSubmit}>
+               
+                {error && (
+                    <div className="login-error">
+                        {error}
+                    </div>
+                )}
 
-                        <div className="login-form-group">
 
-                            <label>Email Address</label>
+               
+
+                {success && (
+                    <div className="login-success">
+                        {success}
+                    </div>
+                )}
+
+
+               
+
+                <form
+                    className="login-form"
+                    onSubmit={handleLogin}
+                >
+
+                  
+                    <div className="form-group">
+
+                        <label htmlFor="userEmail">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="userEmail"
+                            name="userEmail"
+                            value={user.userEmail}
+                            onChange={handleChange}
+                            placeholder="Enter your email"
+                            autoComplete="email"
+                        />
+
+                    </div>
+
+
+
+                    <div className="form-group">
+
+                        <label htmlFor="userPassword">
+                            Password
+                        </label>
+
+                        <div className="password-input-wrapper">
 
                             <input
-                                type="email"
-                                name="user_email"
-                                value={formData.user_email}
-                                onChange={handleChange}
-                                placeholder="Enter your email"
-                                required
-                            />
-
-                        </div>
-
-
-                        <div className="login-form-group">
-
-                            <label>Password</label>
-
-                            <input
-                                type="password"
-                                name="user_password"
-                                value={formData.user_password}
+                                type={
+                                    showPassword
+                                        ? "text"
+                                        : "password"
+                                }
+                                id="userPassword"
+                                name="userPassword"
+                                value={user.userPassword}
                                 onChange={handleChange}
                                 placeholder="Enter your password"
-                                required
+                                autoComplete="current-password"
                             />
+
+                            <button
+                                type="button"
+                                className="password-toggle"
+                                onClick={() =>
+                                    setShowPassword(!showPassword)
+                                }
+                            >
+                                {showPassword ? "Hide" : "Show"}
+                            </button>
 
                         </div>
 
-
-                        <button
-                            type="submit"
-                            className="login-button"
-                        >
-                            Login
-                        </button>
-
-                    </form>
-
-
-                    {message && (
-                        <p className="login-message">
-                            {message}
-                        </p>
-                    )}
-
-                    <div className="forgot-password">
-                        <a href="/forgot-password">
-                              Forgot Password?
-                        </a>
                     </div>
+
+
+                    {/* Forgot Password */}
+
+                    <div className="password-row">
+
+                        <Link
+                            to="/forgotPassword"
+                            className="forgot-link"
+                        >
+                            Forgot password?
+                        </Link>
+
+                    </div>
+
+
+                    {/* Login Button */}
+
+                    <button
+                        type="submit"
+                        className="login-btn"
+                        disabled={loading}
+                    >
+
+                        {loading
+                            ? "Signing in..."
+                            : "Sign In"
+                        }
+
+                    </button>
+
+                </form>
+
+
+                {/* Divider */}
+
+                <div className="divider">
+                    <span>OR</span>
+                </div>
+
+
+                {/* Google Login */}
+
+                <button
+                    type="button"
+                    className="google-btn"
+                    onClick={handleGoogleLogin}
+                >
+
+                    <span className="google-icon">
+                        G
+                    </span>
+
+                    Continue with Google
+
+                </button>
+
+
+                {/* Create Account */}
+
+                <div className="register-section">
+
                     <p className="register-text">
-                        Don't have an account?{" "}
-                        <a href="/register">
-                            Create Account
-                        </a>
+
+                        Don't have an account?
+
+                        <Link
+                            to="/register"
+                            className="register-link"
+                        >
+                            Create account
+                        </Link>
+
                     </p>
 
                 </div>
@@ -150,6 +291,6 @@ function Login() {
 
         </div>
     );
-}
+};
 
 export default Login;

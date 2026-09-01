@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,15 +32,21 @@ public class UserController {
     @Autowired
     private MyUserDetailService userDetailService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user){
+        user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
         userService.register(user);
         return new ResponseEntity<>("Registered Successfully",HttpStatus.OK);
     }
 
     @PostMapping("/login")
     public String login(@RequestBody UserLoginInfo user){
+
+        System.out.println("LOGIN EMAIL: " + user.userEmail());
 
         Authentication authentication=authenticationManager.
                 authenticate(new UsernamePasswordAuthenticationToken(user.userEmail(),user.userPassword()));

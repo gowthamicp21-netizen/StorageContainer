@@ -1,0 +1,1009 @@
+
+/* =========================================================
+   STORAGE CONTAINER
+========================================================= */
+
+.storage-layout {
+    display: flex;
+    min-height: 100vh;
+
+    background: #f6f8fc;
+
+    color: #1f2937;
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.folder-content {
+    flex: 1;
+
+    padding: 32px 40px;
+
+    min-width: 0;
+
+    overflow-y: auto;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.folder-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    margin-bottom: 30px;
+}
+
+
+.folder-header h1 {
+    margin: 0 0 10px;
+
+    font-size: 28px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.5px;
+
+    color: #111827;
+}
+
+
+/* =========================================================
+   BREADCRUMB
+========================================================= */
+
+.breadcrumb {
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 7px;
+
+    font-size: 14px;
+}
+
+
+.breadcrumb-button {
+    border: none;
+
+    background: transparent;
+
+    padding: 0;
+
+    color: #4f46e5;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.breadcrumb-button:hover {
+    color: #3730a3;
+
+    text-decoration: underline;
+}
+
+
+.breadcrumb-arrow {
+    color: #9ca3af;
+}
+
+
+.breadcrumb-folder {
+    color: #6b7280;
+}
+
+
+.breadcrumb-current {
+    color: #111827;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.back-button {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 10px 17px;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #374151;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.04);
+
+    transition: all 0.2s ease;
+}
+
+
+.back-button:hover {
+    background: #eef2ff;
+
+    color: #4f46e5;
+
+    border-color: #c7d2fe;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   SECTION TITLE
+========================================================= */
+
+.files-title {
+    margin: 38px 0 18px;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    color: #111827;
+}
+
+
+.files-section {
+    margin-top: 10px;
+}
+
+
+/* =========================================================
+   FOLDER GRID
+========================================================= */
+
+.folder-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(210px, 1fr));
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   FOLDER CARD
+========================================================= */
+
+.folder-card {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    min-height: 88px;
+
+    padding: 18px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid #e7eaf0;
+
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.folder-card:hover {
+    transform: translateY(-3px);
+
+    border-color: #c7d2fe;
+
+    box-shadow:
+        0 10px 25px rgba(79, 70, 229, 0.09);
+}
+
+
+/* =========================================================
+   FOLDER ICON
+========================================================= */
+
+.folder-icon {
+    width: 52px;
+
+    height: 52px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eef2ff;
+
+    font-size: 30px;
+
+    transition: transform 0.2s ease;
+}
+
+
+.folder-card:hover .folder-icon {
+    transform: scale(1.08);
+}
+
+
+/* =========================================================
+   FOLDER NAME
+========================================================= */
+
+.folder-name {
+    min-width: 0;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    color: #374151;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   FILE GRID
+========================================================= */
+
+.file-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(210px, 1fr));
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   FILE CARD
+========================================================= */
+
+.file-card {
+    position: relative;
+
+    min-height: 150px;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    background: #ffffff;
+
+    border: 1px solid #e7eaf0;
+
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.file-card:hover {
+    transform: translateY(-3px);
+
+    border-color: #d1d5db;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.07);
+}
+
+
+/* =========================================================
+   FILE ICON
+========================================================= */
+
+.file-icon {
+    width: 55px;
+
+    height: 55px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #f3f4f6;
+
+    font-size: 30px;
+}
+
+
+/* =========================================================
+   FILE NAME
+========================================================= */
+
+.file-name {
+    width: 100%;
+
+    margin-top: 18px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #374151;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading {
+    min-height: 300px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #6b7280;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-folder {
+    min-height: 340px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 40px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px dashed #d9dee8;
+
+    border-radius: 18px;
+
+    text-align: center;
+}
+
+
+.empty-icon {
+    width: 85px;
+
+    height: 85px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-bottom: 18px;
+
+    border-radius: 50%;
+
+    background: #eef2ff;
+
+    font-size: 45px;
+}
+
+
+.empty-folder h2 {
+    margin: 0 0 8px;
+
+    font-size: 20px;
+
+    color: #374151;
+}
+
+
+.empty-folder p {
+    margin: 0;
+
+    max-width: 400px;
+
+    line-height: 1.6;
+
+    color: #9ca3af;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   CONTENT SCROLLBAR
+========================================================= */
+
+.folder-content::-webkit-scrollbar {
+    width: 7px;
+}
+
+
+.folder-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+.folder-content::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+
+    border-radius: 10px;
+}
+
+
+.folder-content::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .folder-content {
+        padding: 28px;
+    }
+
+
+    .folder-grid,
+    .file-grid {
+        grid-template-columns:
+            repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .storage-layout {
+        flex-direction: column;
+    }
+
+
+    .folder-content {
+        padding: 20px;
+    }
+
+
+    .folder-header {
+        flex-direction: column;
+
+        gap: 15px;
+    }
+
+
+    .folder-header h1 {
+        font-size: 24px;
+    }
+
+
+    .folder-grid,
+    .file-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+    }
+
+
+    .folder-card {
+        min-height: 80px;
+
+        padding: 12px;
+    }
+
+
+    .folder-icon {
+        width: 45px;
+
+        height: 45px;
+
+        font-size: 25px;
+    }
+
+
+    .file-card {
+        min-height: 130px;
+
+        padding: 15px;
+    }
+
+
+    .file-icon {
+        width: 48px;
+
+        height: 48px;
+
+        font-size: 26px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREEN
+========================================================= */
+
+@media (max-width: 420px) {
+
+    .folder-grid,
+    .file-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+.modal-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(15, 23, 42, 0.48);
+
+    backdrop-filter: blur(4px);
+
+    animation: modalOverlayIn 0.2s ease;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.folder-modal {
+    width: 100%;
+
+    max-width: 450px;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 25px 60px rgba(15, 23, 42, 0.22);
+
+    overflow: hidden;
+
+    animation: modalIn 0.25s ease;
+}
+
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.modal-header {
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    padding: 24px 26px 20px;
+
+    border-bottom: 1px solid #eef0f4;
+}
+
+
+.modal-header h2 {
+    margin: 0 0 6px;
+
+    font-size: 21px;
+
+    font-weight: 700;
+
+    color: #111827;
+}
+
+
+.modal-header p {
+    margin: 0;
+
+    color: #8a93a3;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+.modal-header strong {
+    color: #5b5bd6;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+.modal-close {
+    width: 34px;
+
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #6b7280;
+
+    font-size: 25px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.modal-close:hover {
+    background: #f3f4f6;
+
+    color: #111827;
+}
+
+
+/* =========================================================
+   MODAL BODY
+========================================================= */
+
+.modal-body {
+    padding: 25px 26px;
+}
+
+
+.modal-body label {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: #374151;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.folder-input-wrapper {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    height: 50px;
+
+    padding: 0 14px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #dfe3ea;
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    transition: all 0.2s ease;
+}
+
+
+.folder-input-wrapper:focus-within {
+    border-color: #6366f1;
+
+    box-shadow:
+        0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+
+.folder-input-icon {
+    font-size: 21px;
+
+    flex-shrink: 0;
+}
+
+
+.folder-input-wrapper input {
+    width: 100%;
+
+    height: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #111827;
+
+    font-size: 14px;
+}
+
+
+.folder-input-wrapper input::placeholder {
+    color: #a1a8b5;
+}
+
+
+/* =========================================================
+   MODAL FOOTER
+========================================================= */
+
+.modal-footer {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    padding: 18px 26px 22px;
+
+    border-top: 1px solid #eef0f4;
+
+    background: #fafbfc;
+}
+
+
+.cancel-button,
+.create-folder-button {
+    height: 40px;
+
+    padding: 0 17px;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+
+/* =========================================================
+   CANCEL
+========================================================= */
+
+.cancel-button {
+    border: 1px solid #dfe3ea;
+
+    background: #ffffff;
+
+    color: #4b5563;
+}
+
+
+.cancel-button:hover {
+    background: #f3f4f6;
+
+    border-color: #d1d5db;
+}
+
+
+/* =========================================================
+   CREATE
+========================================================= */
+
+.create-folder-button {
+    border: none;
+
+    background: #4f46e5;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 4px 10px rgba(79, 70, 229, 0.18);
+}
+
+
+.create-folder-button:hover {
+    background: #4338ca;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 15px rgba(79, 70, 229, 0.25);
+}
+
+
+.create-folder-button:disabled,
+.cancel-button:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes modalOverlayIn {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+@keyframes modalIn {
+
+    from {
+        opacity: 0;
+
+        transform: translateY(12px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 500px) {
+
+    .folder-modal {
+        max-width: 100%;
+
+        border-radius: 15px;
+    }
+
+
+    .modal-header {
+        padding: 20px;
+    }
+
+
+    .modal-body {
+        padding: 22px 20px;
+    }
+
+
+    .modal-footer {
+        padding: 16px 20px 20px;
+    }
+
+
+    .cancel-button,
+    .create-folder-button {
+        flex: 1;
+    }
+}
+
+
+
