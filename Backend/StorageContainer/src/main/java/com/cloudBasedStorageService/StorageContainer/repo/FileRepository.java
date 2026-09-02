@@ -20,4 +20,6 @@ public interface FileRepository extends JpaRepository<File,Integer> {
     List<File> findByCreatedByAndFolderIsNull(
             User user
     );
+
+    List<File> findByFolderId(Integer id);
 }

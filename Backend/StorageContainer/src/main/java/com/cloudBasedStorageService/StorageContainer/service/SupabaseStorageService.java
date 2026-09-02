@@ -1,6 +1,7 @@
 package com.cloudBasedStorageService.StorageContainer.service;
 
 import com.cloudBasedStorageService.StorageContainer.config.SupabaseConfig;
+import com.cloudBasedStorageService.StorageContainer.model.File;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -65,6 +66,7 @@ public class SupabaseStorageService {
         HttpHeaders headers = new HttpHeaders();
 
         headers.set("apikey",supabaseConfig.getServiceKey());
+        headers.set("Authorization", "Bearer " + supabaseConfig.getServiceKey());
 
         String contentType =
                 file.getContentType();
@@ -127,6 +129,7 @@ public class SupabaseStorageService {
         HttpHeaders headers = new HttpHeaders();
 
         headers.set("apikey",supabaseConfig.getServiceKey());
+        headers.set("Authorization", "Bearer " + supabaseConfig.getServiceKey());
 
         HttpEntity<Void> request =
                 new HttpEntity<>(
@@ -150,6 +153,48 @@ public class SupabaseStorageService {
 
         throw new RuntimeException(
                 "Supabase download failed: "
+                        + response.getBody()
+        );
+
+
+
+    }
+
+    public String deleteFile(File file) {
+        String url =
+                supabaseConfig.getSupabaseUrl()
+                        + "/storage/v1/object/"
+                        + supabaseConfig.getBucket()
+                        + "/"
+                        + file.getFilePath();
+
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.set("apikey",supabaseConfig.getServiceKey());
+        headers.set("Authorization", "Bearer " + supabaseConfig.getServiceKey());
+
+        HttpEntity<Void> request =
+                new HttpEntity<>(
+                        headers
+                );
+
+        ResponseEntity<String> response =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.DELETE,
+                        request,
+                        String.class
+                );
+
+        if (response.getStatusCode()
+                .is2xxSuccessful()) {
+
+
+            return response.getBody();
+        }
+
+        throw new RuntimeException(
+                "Supabase delete failed: "
                         + response.getBody()
         );
 

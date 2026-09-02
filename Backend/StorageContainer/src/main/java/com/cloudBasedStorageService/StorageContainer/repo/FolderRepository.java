@@ -15,4 +15,6 @@ public interface FolderRepository extends JpaRepository<Folder,Integer> {
     List<Folder> findByCreatedBy(User user);
 
     List<Folder> findByParentFolder(Folder parentFolder);
+
+    List<Folder> findByParentFolderId(Integer id);
 }

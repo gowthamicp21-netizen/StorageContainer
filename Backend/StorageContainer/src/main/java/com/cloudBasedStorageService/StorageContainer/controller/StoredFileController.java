@@ -41,6 +41,28 @@ public class StoredFileController {
         }
     }
 
+    @PutMapping("/file/{fileId}/rename")
+    public ResponseEntity<?> renameFile(
+            @PathVariable Integer fileId,
+            @RequestParam String newName) {
+
+        try {
+            File file = storedFileService.renameFile(
+                    fileId,
+                    newName,
+                    getLoggedInUser()
+            );
+
+            return ResponseEntity.ok(file);
+
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
+
     @GetMapping("/download/{fileId}")
     public ResponseEntity<?> downloadFile(@PathVariable int fileId){
         try{
@@ -68,7 +90,18 @@ public class StoredFileController {
                     body("File Download failed: " + e.getMessage());
         }
     }
-
+    @DeleteMapping("/file/{fileId}")
+    public ResponseEntity<?> deleteFile(@PathVariable int fileId){
+        try{
+            storedFileService.deleteFile(fileId,getLoggedInUser());
+            return ResponseEntity.ok().body("File deleted successfully");
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
+                    body("File delete failed: " + e.getMessage());
+        }
+    }
 
     @GetMapping
     public ResponseEntity<List<File>> getFiles(

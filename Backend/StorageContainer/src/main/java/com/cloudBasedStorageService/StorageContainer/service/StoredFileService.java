@@ -129,4 +129,46 @@ public class StoredFileService {
         FileDownloadResponse response=new FileDownloadResponse(file.getFileName(),file.getFileType(),fileData);
         return response;
     }
+
+    public void deleteFile(int fileId, User user) {
+        File file = storedFileRepository.findById(fileId)
+                .orElseThrow(() ->
+                        new RuntimeException("File not found")
+                );
+        if(!file.getCreatedBy().getUserId().equals(user.getUserId())){
+            throw new RuntimeException(
+                    "You do not have access to this file"
+            );
+        }
+        supabaseStorageService.deleteFile(file);
+        storedFileRepository.delete(file);
+
+    }
+
+    public File renameFile(
+            Integer fileId,
+            String newName,
+            User user) {
+
+        File file = storedFileRepository.findById(fileId)
+                .orElseThrow(() ->
+                        new RuntimeException("File not found"));
+
+        if (!file.getCreatedBy()
+                .getUserId()
+                .equals(user.getUserId())) {
+
+            throw new RuntimeException(
+                    "You do not have access to this file");
+        }
+
+        if (newName == null || newName.trim().isEmpty()) {
+            throw new RuntimeException(
+                    "File name cannot be empty");
+        }
+
+        file.setFileName(newName.trim());
+
+        return storedFileRepository.save(file);
+    }
 }
