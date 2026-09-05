@@ -109,6 +109,7 @@ public class StoredFileController {
                     required = false)
             Integer folderId
     ) {
+        System.out.println("Hi");
 
         User user = getLoggedInUser();
 
@@ -118,6 +119,45 @@ public class StoredFileController {
                         user
                 )
         );
+    }
+    @GetMapping("/view/{fileId}")
+    public ResponseEntity<?> viewFile(@PathVariable int fileId) {
+
+        try {
+
+            User user = getLoggedInUser();
+
+            FileDownloadResponse viewedFile =
+                    storedFileService.viewFile(
+                            fileId,
+                            user
+                    );
+
+            return ResponseEntity.ok()
+                    .header(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            "inline; filename=\"" +
+                                    viewedFile.fileName() +
+                                    "\""
+                    )
+                    .contentType(
+                            MediaType.parseMediaType(
+                                    viewedFile.fileType()
+                            )
+                    )
+                    .body(viewedFile.fileData());
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(
+                            "File view failed: " +
+                                    e.getMessage()
+                    );
+        }
     }
 
     private User getLoggedInUser() {

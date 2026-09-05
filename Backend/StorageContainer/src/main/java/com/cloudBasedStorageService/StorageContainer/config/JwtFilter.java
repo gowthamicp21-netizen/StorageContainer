@@ -57,6 +57,15 @@ public class JwtFilter extends OncePerRequestFilter {
                                 SecurityContextHolder.getContext()
                                         .setAuthentication(authentication);
 
+                                System.out.println(
+                                        "JWT USER: " + userEmail
+                                );
+
+                                System.out.println(
+                                        "JWT AUTHORITIES: " +
+                                                userDetails.getAuthorities()
+                                );
+
                             }
                 }
             }

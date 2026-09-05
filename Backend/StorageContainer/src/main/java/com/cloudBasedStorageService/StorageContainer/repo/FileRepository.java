@@ -22,4 +22,6 @@ public interface FileRepository extends JpaRepository<File,Integer> {
     );
 
     List<File> findByFolderId(Integer id);
+
+    List<File> findByFolder(Folder folder);
 }

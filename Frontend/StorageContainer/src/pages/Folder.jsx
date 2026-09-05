@@ -59,6 +59,52 @@ const Folders = () => {
 
     const [shareType, setShareType] = useState(null);
 
+    const [showSharedWithMe, setShowSharedWithMe] = useState(false);
+
+    const [sharedItems, setSharedItems] = useState([]);
+
+    const [sharedLoading, setSharedLoading] = useState(false);
+
+    const fetchSharedWithMe = async () => {
+
+        try {
+            setSharedLoading(true);
+
+            const response = await api.get(
+                "/api/shares/shared-with-me"
+            );
+
+            console.log("Shared with me:", response.data);
+
+            setSharedItems(response.data);
+
+        } catch (error) {
+
+            console.error(
+                "Error loading shared items:",
+                error
+            );
+
+            alert("Failed to load shared items.");
+
+        } finally {
+            setSharedLoading(false);
+        }
+    };
+
+    const handleSharedWithMe = () => {
+    setShowSharedWithMe(true);
+    setCurrentFolder(null);
+    setFolderPath([]);
+    fetchSharedWithMe();
+    };
+
+    const handleMyFiles = () => {
+    setShowSharedWithMe(false);
+    setCurrentFolder(null);
+    setFolderPath([]);
+    };
+
     const openShareModal = (item, type) => {
     setShareItem(item);
     setShareType(type);
@@ -469,7 +515,7 @@ const createFolder = async () => {
             id: currentFolder.id
         }
         : null
-};
+        };
         console.log(folderData);
 
         await api.post(
@@ -617,11 +663,12 @@ const handleDownload = async (fileId) => {
 
            
 
-            <Sidebar
+           <Sidebar
                 onNewFolder={handleNewFolder}
                 onNewFile={handleNewFile}
+                
+                onSharedWithMe={handleSharedWithMe}
             />
-
 
 
             <main className="folder-content">
@@ -630,11 +677,14 @@ const handleDownload = async (fileId) => {
 
                     <div>
 
-                        <h1>
-                            {currentFolder
-                                ? currentFolder.folderName
-                                : "My Files"}
-                        </h1>
+                <h1>
+                    {showSharedWithMe
+                        ? "Shared With Me"
+                        : currentFolder
+                            ? currentFolder.folderName
+                            : "My Files"
+                    }
+                </h1>
 
 
 
@@ -1043,6 +1093,8 @@ const handleDownload = async (fileId) => {
 
             </main>
 
+            
+
             {showDeleteFolderModal && folderToDelete && (
 
         <div className="modal-overlay">
@@ -1180,6 +1232,48 @@ const handleDownload = async (fileId) => {
 
     </div>
 )}
+
+    {showSharedWithMe ? (
+            <div className="file-grid">
+
+                {sharedLoading ? (
+                    <p>Loading shared items...</p>
+                ) : sharedItems.length === 0 ? (
+                    <div className="empty-state">
+                        <div className="empty-icon">🤝</div>
+                        <h3>No shared items</h3>
+                        <p>Files and folders shared with you will appear here.</p>
+                    </div>
+                ) : (
+                    sharedItems.map((item) => (
+                        <div className="shared-item-card">
+                                <div className="shared-item-icon">
+                                    {item.itemType === "FOLDER" ? "📁" : "📄"}
+                                </div>
+
+                                <div className="shared-item-name">
+                                    {item.itemName}
+                                </div>
+
+                                <div className="shared-item-info">
+                                    Shared with you
+                                </div>
+
+                                <div className="shared-item-permission">
+                                    {item.permission}
+                                </div>
+
+                                <button className="shared-item-menu">
+                                    ⋮
+                                </button>
+                            </div>
+                    ))
+                )}
+
+            </div>
+        ) : (
+            <h1>File Folder Display</h1>
+        )}
 
 {showRenameModal && (
     <div

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/ShareModal.css";
+import api from "../services/axiosConfig";
 
 const ShareModal = ({
     isOpen,
@@ -10,11 +11,13 @@ const ShareModal = ({
 
     const [email, setEmail] = useState("");
     const [permission, setPermission] = useState("VIEWER");
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
             setEmail("");
             setPermission("VIEWER");
+            setLoading(false);
         }
     }, [isOpen]);
 
@@ -34,14 +37,47 @@ const ShareModal = ({
             return;
         }
 
-        console.log("Share item:", {
-            itemId: item.id,
-            itemType,
-            email: email.trim(),
-            permission
-        });
+        try {
+            setLoading(true);
 
-       
+            const shareData = {
+                email: email.trim(),
+                itemId: item.id,
+                itemType: itemType.toUpperCase(),
+                permission: permission
+            };
+
+            console.log("Sending share data:", shareData);
+
+            const response = await api.post(
+                "/api/shares",
+                shareData
+            );
+
+            console.log("Share successful:", response.data);
+
+            alert(`Successfully shared "${itemName}" with ${email.trim()}`);
+
+            onClose();
+
+        } catch (error) {
+
+            console.error("Share failed:", error);
+
+            if (error.response) {
+                console.error("Backend response:", error.response.data);
+
+                alert(
+                    error.response.data?.message ||
+                    "Failed to share the item"
+                );
+            } else {
+                alert("Unable to connect to the server");
+            }
+
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -55,7 +91,7 @@ const ShareModal = ({
                 onClick={(e) => e.stopPropagation()}
             >
 
-                {/* HEADER */}
+                
                 <div className="share-modal-header">
 
                     <div className="share-title-section">
@@ -84,15 +120,13 @@ const ShareModal = ({
                 </div>
 
 
-                {/* ITEM */}
+              
                 <div className="share-item-preview">
 
                     <div className="share-item-icon">
-
                         {itemType === "folder"
                             ? "📁"
                             : "📄"}
-
                     </div>
 
                     <div className="share-item-info">
@@ -112,7 +146,7 @@ const ShareModal = ({
                 </div>
 
 
-                {/* FORM */}
+               
                 <div className="share-form">
 
                     <label>
@@ -132,6 +166,7 @@ const ShareModal = ({
                             onChange={(e) =>
                                 setEmail(e.target.value)
                             }
+                            disabled={loading}
                         />
 
                     </div>
@@ -145,6 +180,7 @@ const ShareModal = ({
 
                         <button
                             type="button"
+                            disabled={loading}
                             className={
                                 permission === "VIEWER"
                                     ? "permission-option active"
@@ -172,6 +208,7 @@ const ShareModal = ({
 
                         <button
                             type="button"
+                            disabled={loading}
                             className={
                                 permission === "EDITOR"
                                     ? "permission-option active"
@@ -201,12 +238,13 @@ const ShareModal = ({
                 </div>
 
 
-                {/* FOOTER */}
+               
                 <div className="share-modal-actions">
 
                     <button
                         className="share-cancel-btn"
                         onClick={onClose}
+                        disabled={loading}
                     >
                         Cancel
                     </button>
@@ -214,8 +252,11 @@ const ShareModal = ({
                     <button
                         className="share-submit-btn"
                         onClick={handleShare}
+                        disabled={loading}
                     >
-                        👥 Share
+                        {loading
+                            ? "Sharing..."
+                            : "👥 Share"}
                     </button>
 
                 </div>
@@ -227,3 +268,4 @@ const ShareModal = ({
 };
 
 export default ShareModal;
+

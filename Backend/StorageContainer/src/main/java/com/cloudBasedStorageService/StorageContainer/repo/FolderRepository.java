@@ -11,10 +11,10 @@ import java.util.List;
 @Repository
 public interface FolderRepository extends JpaRepository<Folder,Integer> {
 
-    @Query("SELECT f FROM Folder f WHERE f.parentFolder IS NULL")
-    List<Folder> findByCreatedBy(User user);
+
+    List<Folder> findByCreatedByAndParentFolderIsNull(User user);
+
+    List<Folder> findByCreatedByAndParentFolder(User user, Folder parentFolder);
 
     List<Folder> findByParentFolder(Folder parentFolder);
-
-    List<Folder> findByParentFolderId(Integer id);
 }

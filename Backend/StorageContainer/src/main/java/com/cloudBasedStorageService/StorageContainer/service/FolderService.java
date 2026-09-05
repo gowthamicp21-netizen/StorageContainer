@@ -25,30 +25,52 @@ public class FolderService {
     @Autowired
     private FileRepository fileRepository;
 
+    public List<Folder> getRootFolders() {
 
-    public List<Folder> getFolder()
-    {
         String userEmail = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getName();
-        User user=userRepository.findByUserEmail(userEmail).get();
-        return folderRepository.findByCreatedBy(user);
+
+        User user = userRepository
+                .findByUserEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return folderRepository.findByCreatedByAndParentFolderIsNull(user);
     }
 
-    public void saveFolder(Folder folder) {
+    public Folder saveFolder(Folder folder) {
+
         String userEmail = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getName();
-        User user=userRepository.findByUserEmail(userEmail).get();
+
+        User user = userRepository
+                .findByUserEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         folder.setCreatedBy(user);
-        folderRepository.save(folder);
+
+        return folderRepository.save(folder);
     }
 
-    public List<Folder> getFolderChildren(Integer parentFolderId) {
+    public List<Folder> getChildFolders(Integer parentFolderId) {
+
+        String userEmail = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        User user = userRepository
+                .findByUserEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         Folder parentFolder=folderRepository.findById(parentFolderId).get();
-        return folderRepository.findByParentFolder(parentFolder);
+
+        return folderRepository.findByCreatedByAndParentFolder(
+                user,
+                parentFolder
+        );
     }
 
     public void deleteFolder(Integer folderId) {
@@ -68,7 +90,7 @@ public class FolderService {
         }
 
         List<Folder> subFolders =
-                folderRepository.findByParentFolderId(folder.getId());
+                folderRepository.findByParentFolder(folder);
 
         for (Folder subFolder : subFolders) {
 

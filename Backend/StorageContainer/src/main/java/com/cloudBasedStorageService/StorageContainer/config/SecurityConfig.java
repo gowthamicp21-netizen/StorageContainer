@@ -106,7 +106,7 @@ public class SecurityConfig {
                                 "/oauth2/**",
                                 "/login/**"
                         ).permitAll()
-                        .requestMatchers("/api/files","/api/folders").hasRole("PUBLIC_USER")
+                        .requestMatchers("/api/files","/api/folders").hasAnyRole("PUBLIC_USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
 

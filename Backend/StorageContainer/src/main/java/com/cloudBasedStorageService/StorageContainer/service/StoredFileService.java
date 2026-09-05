@@ -3,10 +3,12 @@ package com.cloudBasedStorageService.StorageContainer.service;
 
 import com.cloudBasedStorageService.StorageContainer.model.Folder;
 import com.cloudBasedStorageService.StorageContainer.model.File;
+import com.cloudBasedStorageService.StorageContainer.model.ItemType;
 import com.cloudBasedStorageService.StorageContainer.model.User;
 import com.cloudBasedStorageService.StorageContainer.model.dto.FileDownloadResponse;
 import com.cloudBasedStorageService.StorageContainer.repo.FolderRepository;
 import com.cloudBasedStorageService.StorageContainer.repo.FileRepository;
+import com.cloudBasedStorageService.StorageContainer.repo.ShareRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,8 @@ public class StoredFileService {
     private final FileRepository storedFileRepository;
     private final FolderRepository folderRepository;
     private final SupabaseStorageService supabaseStorageService;
+    private final ShareRepository shareRepository;
+    private final ShareService shareService;
 
     public File uploadFile(
             MultipartFile file,
@@ -77,6 +81,8 @@ public class StoredFileService {
         );
     }
 
+
+
     public List<File> getFiles(
             Integer folderId,
             User user
@@ -113,21 +119,61 @@ public class StoredFileService {
     }
 
     public FileDownloadResponse downloadFile(int fileId, User user) {
-        File file=storedFileRepository.findById(fileId).get();
-        if(file==null){
-            throw new RuntimeException(
-                    "You do not have file"
-            );
+
+        File file = storedFileRepository.findById(fileId)
+                .orElseThrow(() ->
+                        new RuntimeException("File not found")
+                );
+
+
+        boolean isOwner =
+                file.getCreatedBy().getUserId()
+                        .equals(user.getUserId());
+
+
+        boolean hasDirectShare =
+                shareRepository
+                        .findByEmailAndItemIdAndItemType(
+                                user.getUserEmail(),
+                                fileId,
+                                ItemType.FILE
+                        )
+                        .isPresent();
+
+
+        boolean hasFolderShare = false;
+
+        if (file.getFolder() != null) {
+
+            hasFolderShare =
+                    shareRepository
+                            .findByEmailAndItemIdAndItemType(
+                                    user.getUserEmail(),
+                                    file.getFolder().getId(),
+                                    ItemType.FOLDER
+                            )
+                            .isPresent();
         }
-        if(file.getCreatedBy().getUserId()!=user.getUserId()){
+
+
+        if (!isOwner && !hasDirectShare && !hasFolderShare) {
+
             throw new RuntimeException(
                     "You do not have access to this file"
             );
         }
-        String filePath=file.getFilePath();
-        byte[] fileData=supabaseStorageService.downloadFile(filePath);
-        FileDownloadResponse response=new FileDownloadResponse(file.getFileName(),file.getFileType(),fileData);
-        return response;
+
+
+        String filePath = file.getFilePath();
+
+        byte[] fileData =
+                supabaseStorageService.downloadFile(filePath);
+
+        return new FileDownloadResponse(
+                file.getFileName(),
+                file.getFileType(),
+                fileData
+        );
     }
 
     public void deleteFile(int fileId, User user) {
@@ -170,5 +216,54 @@ public class StoredFileService {
         file.setFileName(newName.trim());
 
         return storedFileRepository.save(file);
+    }
+
+    public FileDownloadResponse viewFile(int fileId, User user) {
+
+        File file = storedFileRepository.findById(fileId)
+                .orElseThrow(() ->
+                        new RuntimeException("File not found")
+                );
+
+        boolean isOwner =
+                file.getCreatedBy().getUserId()
+                        .equals(user.getUserId());
+
+        boolean hasDirectShare =
+                shareRepository
+                        .findByEmailAndItemIdAndItemType(
+                                user.getUserEmail(),
+                                fileId,
+                                ItemType.FILE
+                        )
+                        .isPresent();
+
+        boolean hasFolderShare = false;
+
+        if (file.getFolder() != null) {
+
+            hasFolderShare =
+                    shareService.hasFolderAccess(
+                            file.getFolder().getId(),
+                            user.getUserEmail()
+                    );
+        }
+
+        if (!isOwner && !hasDirectShare && !hasFolderShare) {
+            throw new RuntimeException(
+                    "You do not have access to this file"
+            );
+        }
+
+        String filePath = file.getFilePath();
+
+        byte[] fileData =
+                supabaseStorageService.downloadFile(filePath);
+
+        return new FileDownloadResponse(
+                file.getFileName(),
+                file.getFileType(),
+                fileData
+        );
     }
 }

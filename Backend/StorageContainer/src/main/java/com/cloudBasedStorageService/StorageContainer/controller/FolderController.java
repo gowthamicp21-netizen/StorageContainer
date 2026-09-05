@@ -25,9 +25,8 @@ public class FolderController {
     private UserService userService;
 
     @GetMapping("/root")
-    public ResponseEntity<?> getFolder(){
-        List<Folder> folders=folderService.getFolder();
-        return ResponseEntity.ok().body(folders);
+    public List<Folder> getRootFolders() {
+        return folderService.getRootFolders();
     }
 
     @PutMapping("/folder/{folderId}/rename")
@@ -53,15 +52,16 @@ public class FolderController {
     }
     @PostMapping
     public ResponseEntity<?> saveFolder(@RequestBody Folder folder){
-        System.out.println(folder.getParentFolder());
+        System.out.println(folder.getFolderName());
         folderService.saveFolder(folder);
         return ResponseEntity.status(HttpStatus.CREATED).body("Successfully saved folder");
     }
 
-    @GetMapping("/{parentFolderId}/children")
-    public  ResponseEntity<?> getFolderChildren(@PathVariable Integer parentFolderId){
-        List<Folder> folders=folderService.getFolderChildren(parentFolderId);
-        return ResponseEntity.ok().body(folders);
+    @GetMapping("/{folderId}/children")
+    public List<Folder> getChildFolders(
+            @PathVariable Integer folderId) {
+
+        return folderService.getChildFolders(folderId);
     }
 
     @DeleteMapping("{folderId}")
