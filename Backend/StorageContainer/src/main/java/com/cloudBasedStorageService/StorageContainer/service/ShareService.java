@@ -1,7 +1,7 @@
 package com.cloudBasedStorageService.StorageContainer.service;
 
 import com.cloudBasedStorageService.StorageContainer.model.*;
-import com.cloudBasedStorageService.StorageContainer.model.dto.ShareResponse;
+import com.cloudBasedStorageService.StorageContainer.model.dto.*;
 import com.cloudBasedStorageService.StorageContainer.model.dto.SharedFolderResponse;
 import com.cloudBasedStorageService.StorageContainer.repo.FileRepository;
 import com.cloudBasedStorageService.StorageContainer.repo.FolderRepository;
@@ -85,12 +85,17 @@ public class ShareService {
 
         for (Share share : shares) {
 
+            // ==============================
+            // FILE
+            // ==============================
+
             if (share.getItemType().equals(ItemType.FILE)) {
 
                 fileRepository.findById(share.getItemId())
                         .ifPresent(file -> {
 
                             ShareResponse res = new ShareResponse(
+                                    share.getId(),
                                     share.getEmail(),
                                     share.getItemId(),
                                     share.getItemType(),
@@ -102,12 +107,19 @@ public class ShareService {
                             response.add(res);
                         });
 
-            } else {
+            }
+
+            // ==============================
+            // FOLDER
+            // ==============================
+
+            else {
 
                 folderRepository.findById(share.getItemId())
                         .ifPresent(folder -> {
 
                             ShareResponse res = new ShareResponse(
+                                    share.getId(),
                                     share.getEmail(),
                                     share.getItemId(),
                                     share.getItemType(),
@@ -123,7 +135,6 @@ public class ShareService {
 
         return response;
     }
-
     public List<Share> getAllShares() {
         return shareRepository.findAll();
     }
@@ -201,27 +212,5 @@ public class ShareService {
         return false;
     }
 
-    public Role getFolderPermission(Integer folderId, String userEmail) {
 
-        Folder folder = folderRepository.findById(folderId)
-                .orElse(null);
-
-        while (folder != null) {
-
-            Optional<Share> share =
-                    shareRepository.findByEmailAndItemIdAndItemType(
-                            userEmail,
-                            folder.getId(),
-                            ItemType.FOLDER
-                    );
-
-            if (share.isPresent()) {
-                return share.get().getPermission();
-            }
-
-            folder = folder.getParentFolder();
-        }
-
-        return null;
-    }
 }

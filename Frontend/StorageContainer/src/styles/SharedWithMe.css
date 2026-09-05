@@ -1,109 +1,173 @@
-
+/* =========================================================
+   SHARED WITH ME PAGE
+   ========================================================= */
 
 .shared-page {
-    padding: 300px;
-    min-height: 100%;
-    background: #f8fafc;
+    width: 100%;
+    min-height: 100vh;
+    padding: 32px 40px;
     box-sizing: border-box;
+
+    background: #f8fafc;
 }
 
 
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .shared-page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 28px;
+    margin-bottom: 26px;
 }
 
 .shared-page-header h1 {
     margin: 0;
-    font-size: 28px;
-    font-weight: 700;
-    color: #172033;
+
+    font-size: 26px;
+    font-weight: 600;
+
+    color: #1f2937;
 }
 
 .shared-page-header p {
-    margin: 7px 0 0;
-    color: #718096;
+    margin: 6px 0 0;
+
     font-size: 14px;
+
+    color: #6b7280;
 }
 
 
+/* =========================================================
+   LOADING
+   ========================================================= */
 
 .shared-loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 300px;
 
-    color: #64748b;
-    font-size: 15px;
-}
-
-
-
-.shared-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-
-
-
-.shared-item {
     display: flex;
     align-items: center;
+    justify-content: center;
 
-    min-height: 82px;
-    padding: 16px 20px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.shared-empty {
+    width: 100%;
+    min-height: 320px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
 
     background: #ffffff;
 
-    border: 1px solid #e7ebf0;
+    border: 1px solid #e5e7eb;
     border-radius: 14px;
+}
 
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+.shared-empty-icon {
+    margin-bottom: 12px;
 
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
+    font-size: 42px;
+}
+
+.shared-empty h2 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    color: #374151;
+}
+
+.shared-empty p {
+    margin: 7px 0 0;
+
+    font-size: 13px;
+
+    color: #9ca3af;
+}
+
+
+/* =========================================================
+   SHARED LIST
+   ========================================================= */
+
+.shared-list {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+
+/* =========================================================
+   SHARED ITEM
+   ========================================================= */
+
+.shared-item {
+    position: relative;
+
+    width: 100%;
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 12px 14px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
 }
 
 .shared-item:hover {
-    transform: translateY(-2px);
-
-    border-color: #d7dce3;
-
-    box-shadow:
-        0 8px 24px rgba(15, 23, 42, 0.08);
+    border-color: #d5d9df;
 }
 
 
+/* =========================================================
+   ITEM ICON
+   ========================================================= */
 
 .shared-item-icon {
-    width: 48px;
-    height: 48px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    margin-right: 16px;
-
-    border-radius: 12px;
-
-    background: #f1f5f9;
-
-    font-size: 24px;
+    width: 44px;
+    height: 44px;
 
     flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 14px;
+
+    background: #f3f4f6;
+
+    border-radius: 9px;
+
+    font-size: 22px;
 }
 
 
-
+/* =========================================================
+   ITEM INFORMATION
+   ========================================================= */
 
 .shared-item-info {
     flex: 1;
@@ -111,267 +175,588 @@
 }
 
 .shared-item-info h3 {
-    margin: 0 0 7px;
+    margin: 0;
 
-    font-size: 16px;
-    font-weight: 600;
-
-    color: #1e293b;
+    overflow: hidden;
 
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    color: #1f2937;
 }
 
 .shared-item-details {
     display: flex;
     align-items: center;
-    gap: 8px;
 
-    font-size: 13px;
-    color: #64748b;
-}
+    gap: 6px;
 
-.shared-item-details strong {
-    color: #475569;
-    font-weight: 500;
+    margin-top: 5px;
+
+    font-size: 12px;
+
+    color: #9ca3af;
 }
 
 .shared-dot {
-    color: #cbd5e1;
+    color: #d1d5db;
 }
 
 
-
+/* =========================================================
+   PERMISSION BADGE
+   ========================================================= */
 
 .shared-permission {
+    width: 95px;
+
     display: flex;
     align-items: center;
-    gap: 7px;
+    justify-content: center;
 
-    min-width: 95px;
+    gap: 6px;
 
-    padding: 7px 12px;
+    margin-right: 18px;
+    padding: 6px 9px;
 
-    border-radius: 20px;
+    box-sizing: border-box;
 
-    font-size: 12px;
+    border-radius: 6px;
+
+    font-size: 11px;
     font-weight: 600;
-
-    margin-right: 20px;
-}
-
-.shared-permission.viewer {
-    background: #f1f5f9;
-    color: #475569;
 }
 
 .shared-permission.editor {
-    background: #fef3c7;
-    color: #92400e;
+    background: #f0fdf4;
+    color: #15803d;
+
+    border: 1px solid #dcfce7;
+}
+
+.shared-permission.viewer {
+    background: #f8fafc;
+    color: #64748b;
+
+    border: 1px solid #e2e8f0;
+}
+
+.shared-permission span:first-child {
+    font-size: 13px;
 }
 
 
-
+/* =========================================================
+   OPEN BUTTON
+   ========================================================= */
 
 .shared-open-btn {
-    border: none;
+    width: 65px;
+    height: 34px;
 
-    padding: 9px 18px;
+    flex-shrink: 0;
 
-    border-radius: 9px;
+    margin-right: 10px;
 
-    background: #2563eb;
-    color: #ffffff;
-
-    font-size: 13px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.shared-open-btn:hover {
-    background: #1d4ed8;
-
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 4px 12px rgba(37, 99, 235, 0.25);
-}
-
-.shared-open-btn:active {
-    transform: translateY(0);
-}
-
-
-
-.shared-empty {
-    display: flex;
-    flex-direction: column;
-
-    justify-content: center;
-    align-items: center;
-
-    min-height: 360px;
-
-    padding: 40px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
 
     background: #ffffff;
 
-    border: 1px dashed #d7dee8;
-    border-radius: 16px;
+    color: #374151;
 
-    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    outline: none;
 }
 
-.shared-empty-icon {
-    width: 70px;
-    height: 70px;
+.shared-open-btn:hover {
+    background: #f3f4f6;
+
+    border-color: #c5c9d0;
+}
+
+.shared-open-btn:active {
+    background: #e5e7eb;
+}
+
+
+/* =========================================================
+   THREE DOT CONTAINER
+   ========================================================= */
+
+.shared-item-menu-container {
+    position: relative;
+
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
 
     display: flex;
-    justify-content: center;
     align-items: center;
-
-    margin-bottom: 18px;
-
-    border-radius: 50%;
-
-    background: #f1f5f9;
-
-    font-size: 32px;
+    justify-content: center;
 }
 
-.shared-empty h2 {
+
+/* =========================================================
+   THREE DOT BUTTON
+   ========================================================= */
+
+.shared-three-dot {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+    margin: 0;
+
+    border: none;
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: #6b7280;
+
+    font-size: 22px;
+    font-weight: 600;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    outline: none;
+
+    /* Prevent movement */
+    transform: none;
+    animation: none;
+}
+
+.shared-three-dot:hover {
+    background: #f3f4f6;
+
+    color: #374151;
+
+    transform: none;
+}
+
+.shared-three-dot:active {
+    background: #e5e7eb;
+
+    transform: none;
+}
+
+
+/* =========================================================
+   DROPDOWN MENU
+   ========================================================= */
+
+.shared-dropdown {
+    position: absolute;
+
+    top: 43px;
+    right: 0;
+
+    width: 155px;
+
+    padding: 5px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.10),
+        0 2px 5px rgba(0, 0, 0, 0.05);
+
+    z-index: 5000;
+
+    /* No animation */
+    animation: none;
+}
+
+
+/* =========================================================
+   DROPDOWN BUTTONS
+   ========================================================= */
+
+.shared-dropdown button {
+    width: 100%;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 0 10px;
+    margin: 0;
+
+    box-sizing: border-box;
+
+    border: none;
+    border-radius: 6px;
+
+    background: transparent;
+
+    color: #374151;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    outline: none;
+
+    transform: none;
+    animation: none;
+}
+
+.shared-dropdown button:hover {
+    background: #f3f4f6;
+
+    color: #111827;
+
+    transform: none;
+}
+
+.shared-dropdown button:active {
+    background: #e5e7eb;
+
+    transform: none;
+}
+
+
+/* =========================================================
+   DROPDOWN ICON
+   ========================================================= */
+
+.shared-dropdown button span:first-child {
+    width: 20px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   DELETE MENU ITEM
+   ========================================================= */
+
+.shared-dropdown .delete-menu-item {
+    color: #dc2626;
+}
+
+.shared-dropdown .delete-menu-item:hover {
+    background: #fef2f2;
+
+    color: #b91c1c;
+}
+
+
+/* =========================================================
+   RENAME MODAL OVERLAY
+   ========================================================= */
+
+.rename-modal-overlay {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    background: rgba(15, 23, 42, 0.40);
+
+    z-index: 10000;
+}
+
+
+/* =========================================================
+   RENAME / DELETE MODAL
+   ========================================================= */
+
+.rename-modal {
+    width: 400px;
+    max-width: 100%;
+
+    padding: 25px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 20px 45px rgba(0, 0, 0, 0.18);
+}
+
+.rename-modal h3 {
     margin: 0 0 8px;
 
     font-size: 19px;
     font-weight: 600;
 
-    color: #1e293b;
+    color: #1f2937;
 }
 
-.shared-empty p {
-    max-width: 420px;
+.rename-modal p {
+    margin: 0 0 18px;
 
-    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
 
+    color: #6b7280;
+}
+
+.rename-modal p strong {
+    color: #374151;
+}
+
+
+/* =========================================================
+   RENAME INPUT
+   ========================================================= */
+
+.rename-modal input {
+    width: 100%;
+    height: 42px;
+
+    padding: 0 12px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #1f2937;
+
+    font-family: inherit;
     font-size: 14px;
-    line-height: 1.6;
 
-    color: #64748b;
+    outline: none;
+}
+
+.rename-modal input:focus {
+    border-color: #6366f1;
+
+    box-shadow:
+        0 0 0 3px rgba(99, 102, 241, 0.10);
+}
+
+.rename-modal input:disabled {
+    background: #f9fafb;
+
+    cursor: not-allowed;
 }
 
 
-@media (max-width: 768px) {
+/* =========================================================
+   MODAL BUTTON AREA
+   ========================================================= */
 
-    .shared-page {
-        padding: 20px;
-    }
-
-    .shared-page-header h1 {
-        font-size: 24px;
-    }
-
-    .shared-item {
-        padding: 14px;
-    }
-
-    .shared-permission {
-        min-width: auto;
-        margin-right: 10px;
-    }
-
-    .shared-permission span:last-child {
-        display: none;
-    }
-
-    .shared-open-btn {
-        padding: 8px 13px;
-    }
-}
-
-
-@media (max-width: 560px) {
-
-    .shared-item {
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-
-    .shared-item-icon {
-        width: 42px;
-        height: 42px;
-        font-size: 20px;
-        margin-right: 0;
-    }
-
-    .shared-item-info {
-        width: calc(100% - 55px);
-        flex: none;
-    }
-
-    .shared-permission {
-        margin-left: 54px;
-    }
-
-    .shared-open-btn {
-        margin-left: auto;
-    }
-}
-
-.shared-item-menu-container {
-    background-color:black;
-    position: relative;
-    margin-left: 12px;
-}
-
-.shared-three-dot {
-    border: none;
-    background: transparent;
-    font-size: 24px;
-    cursor: pointer;
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
+.rename-modal-buttons {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    margin-top: 20px;
 }
 
-.shared-three-dot:hover {
-    background: #f1f3f5;
-}
 
-.shared-item-menu {
-    position: absolute;
-    right: 0;
-    top: 42px;
-    min-width: 150px;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-    padding: 6px;
-    z-index: 100;
-}
+/* =========================================================
+   CANCEL BUTTON
+   ========================================================= */
 
-.shared-item-menu button {
-    width: 100%;
-    border: none;
-    background: black;
-    padding: 10px 12px;
-    text-align: left;
+.rename-cancel-btn {
+    height: 38px;
+
+    padding: 0 15px;
+
+    border: 1px solid #d1d5db;
     border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #374151;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+
     cursor: pointer;
-    font-size: 14px;
 }
 
-.shared-item-menu button:hover {
+.rename-cancel-btn:hover {
     background: #f3f4f6;
 }
 
+.rename-cancel-btn:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   RENAME CONFIRM BUTTON
+   ========================================================= */
+
+.rename-confirm-btn {
+    height: 38px;
+
+    padding: 0 17px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: #111827;
+
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+
+    cursor: pointer;
+}
+
+.rename-confirm-btn:hover {
+    background: #374151;
+}
+
+.rename-confirm-btn:disabled {
+    background: #d1d5db;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   DELETE WARNING
+   ========================================================= */
+
+.delete-warning {
+    margin-top: -8px !important;
+
+    color: #dc2626 !important;
+
+    font-size: 12px !important;
+}
+
+
+/* =========================================================
+   DELETE CONFIRM BUTTON
+   ========================================================= */
+
+.delete-confirm-btn {
+    height: 38px;
+
+    padding: 0 17px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: #dc2626;
+
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+
+    cursor: pointer;
+}
+
+.delete-confirm-btn:hover {
+    background: #b91c1c;
+}
+
+.delete-confirm-btn:disabled {
+    background: #fca5a5;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .shared-page {
+        padding: 25px 20px;
+    }
+
+    .shared-permission {
+        display: none;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .shared-page {
+        padding: 20px 12px;
+    }
+
+    .shared-item {
+        padding: 10px;
+    }
+
+    .shared-item-icon {
+        width: 40px;
+        height: 40px;
+
+        margin-right: 10px;
+    }
+
+    .shared-item-info h3 {
+        font-size: 14px;
+    }
+
+    .shared-item-details {
+        font-size: 11px;
+    }
+
+    .shared-open-btn {
+        width: 58px;
+        height: 32px;
+
+        font-size: 12px;
+    }
+}
