@@ -1,4 +1,4 @@
-/* Login.css */
+
 
 .login-page {
     min-height: 100vh;
@@ -10,7 +10,7 @@
     font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
 
-/* Main Card */
+
 
 .login-card {
     width: 100%;
@@ -22,7 +22,7 @@
     box-shadow: 0 10px 35px rgba(15, 23, 42, 0.08);
 }
 
-/* Logo */
+
 
 .login-logo {
     width: 52px;
@@ -38,7 +38,7 @@
     font-weight: 700;
 }
 
-/* Heading */
+
 
 .login-title {
     text-align: center;
@@ -55,7 +55,7 @@
     margin: 9px 0 32px;
 }
 
-/* Form */
+
 
 .login-form {
     display: flex;
@@ -100,7 +100,7 @@
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* Forgot Password */
+
 
 .password-row {
     display: flex;
@@ -119,8 +119,6 @@
 .forgot-link:hover {
     text-decoration: underline;
 }
-
-/* Login Button */
 
 .login-btn {
     width: 100%;
@@ -143,7 +141,7 @@
     transform: scale(0.99);
 }
 
-/* Divider */
+
 
 .divider {
     display: flex;
@@ -162,7 +160,7 @@
     flex: 1;
 }
 
-/* Google */
+
 
 .google-btn {
     width: 100%;
@@ -190,7 +188,7 @@
     font-size: 18px;
 }
 
-/* Create Account */
+
 
 .register-section {
     text-align: center;
@@ -216,7 +214,7 @@
     text-decoration: underline;
 }
 
-/* Error */
+
 
 .login-error {
     background: #fef2f2;
@@ -228,7 +226,7 @@
     margin-bottom: 18px;
 }
 
-/* Success */
+
 
 .login-success {
     background: #f0fdf4;
@@ -240,7 +238,7 @@
     margin-bottom: 18px;
 }
 
-/* Mobile */
+
 
 @media (max-width: 500px) {
 

@@ -8,22 +8,20 @@ const SharedWithMe = () => {
     const [sharedItems, setSharedItems] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Three dot menu
+  
     const [menuItem, setMenuItem] = useState(null);
 
-    // Rename
+   
     const [renameItem, setRenameItem] = useState(null);
     const [newName, setNewName] = useState("");
     const [renaming, setRenaming] = useState(false);
 
-    // Delete shared item
+   
     const [deleteItem, setDeleteItem] = useState(null);
     const [deleting, setDeleting] = useState(false);
 
 
-    // ==========================================
-    // FETCH SHARED ITEMS
-    // ==========================================
+   
 
     const fetchSharedItems = async () => {
 
@@ -64,9 +62,7 @@ const SharedWithMe = () => {
     }, []);
 
 
-    // ==========================================
-    // ICONS
-    // ==========================================
+    
 
     const getItemIcon = (itemType) => {
 
@@ -92,10 +88,7 @@ const SharedWithMe = () => {
     };
 
 
-    // ==========================================
-    // THREE DOT MENU
-    // ==========================================
-
+   
     const toggleMenu = (item) => {
 
         if (
@@ -113,10 +106,7 @@ const SharedWithMe = () => {
     };
 
 
-    // ==========================================
-    // OPEN
-    // ==========================================
-
+    
     const handleOpen = async (item) => {
 
         setMenuItem(null);
@@ -130,11 +120,7 @@ const SharedWithMe = () => {
                     item.itemId
                 );
 
-                /*
-                 * Folder navigation can be connected
-                 * to your existing folder navigation.
-                 */
-
+                
             } else {
 
                 const response = await api.get(
@@ -175,9 +161,7 @@ const SharedWithMe = () => {
     };
 
 
-    // ==========================================
-    // RENAME MODAL
-    // ==========================================
+   
 
     const openRenameModal = (item) => {
 
@@ -207,9 +191,7 @@ const SharedWithMe = () => {
     };
 
 
-    // ==========================================
-    // RENAME
-    // ==========================================
+   
 
     const handleRename = async () => {
 
@@ -241,7 +223,7 @@ const SharedWithMe = () => {
 
             setRenaming(true);
 
-            // Folder rename
+         
             if (
                 renameItem.itemType ===
                 "FOLDER"
@@ -259,7 +241,7 @@ const SharedWithMe = () => {
                 );
             }
 
-            // File rename
+           
             else if (
                 renameItem.itemType ===
                 "FILE"
@@ -313,9 +295,7 @@ const SharedWithMe = () => {
     };
 
 
-    // ==========================================
-    // DELETE MODAL
-    // ==========================================
+ 
 
     const openDeleteModal = (item) => {
 
@@ -348,9 +328,7 @@ const SharedWithMe = () => {
     };
 
 
-    // ==========================================
-    // DELETE SHARE
-    // ==========================================
+   
 
     const handleDelete = async () => {
 
@@ -381,9 +359,6 @@ const SharedWithMe = () => {
 
             setDeleting(true);
 
-            // IMPORTANT:
-            // This deletes ONLY the Share record.
-            // The actual file/folder is NOT deleted.
 
             await api.delete(
                 `/api/shares/${deleteItem.shareId}`
@@ -424,10 +399,7 @@ const SharedWithMe = () => {
     };
 
 
-    // ==========================================
-    // LOADING
-    // ==========================================
-
+    
     if (loading) {
 
         return (
@@ -442,17 +414,13 @@ const SharedWithMe = () => {
     }
 
 
-    // ==========================================
-    // UI
-    // ==========================================
+ 
 
     return (
 
         <div className="shared-page">
 
-            {/* ==================================
-                HEADER
-            ================================== */}
+          
 
             <div className="shared-page-header">
 
@@ -471,9 +439,6 @@ const SharedWithMe = () => {
             </div>
 
 
-            {/* ==================================
-                EMPTY STATE
-            ================================== */}
 
             {sharedItems.length === 0 ? (
 
@@ -505,10 +470,7 @@ const SharedWithMe = () => {
                             key={`${item.shareId}-${item.itemType}-${item.itemId}`}
                         >
 
-                            {/* ==================================
-                                ICON
-                            ================================== */}
-
+                       
                             <div className="shared-item-icon">
 
                                 {getItemIcon(
@@ -518,10 +480,7 @@ const SharedWithMe = () => {
                             </div>
 
 
-                            {/* ==================================
-                                INFORMATION
-                            ================================== */}
-
+                          
                             <div className="shared-item-info">
 
                                 <h3>
@@ -554,9 +513,7 @@ const SharedWithMe = () => {
                             </div>
 
 
-                            {/* ==================================
-                                PERMISSION
-                            ================================== */}
+                        
 
                             <div
                                 className={`shared-permission ${
@@ -580,10 +537,7 @@ const SharedWithMe = () => {
                             </div>
 
 
-                            {/* ==================================
-                                OPEN BUTTON
-                            ================================== */}
-
+                          
                             <button
                                 className="shared-open-btn"
                                 onClick={() =>
@@ -594,10 +548,7 @@ const SharedWithMe = () => {
                             </button>
 
 
-                            {/* ==================================
-                                THREE DOT MENU
-                            ================================== */}
-
+                           
                             <div className="shared-item-menu-container">
 
                                 <button
@@ -610,9 +561,7 @@ const SharedWithMe = () => {
                                 </button>
 
 
-                                {/* ==================================
-                                    DROPDOWN
-                                ================================== */}
+                               
 
                                 {menuItem &&
                                     menuItem.shareId ===
@@ -641,7 +590,7 @@ const SharedWithMe = () => {
                                             </button>
 
 
-                                            {/* RENAME */}
+                                          
 
                                             {item.permission ===
                                                 "EDITOR" && (
@@ -667,8 +616,7 @@ const SharedWithMe = () => {
                                             )}
 
 
-                                            {/* REMOVE SHARE */}
-
+                                           
                                             <button
                                                 className="delete-menu-item"
                                                 onClick={() =>
@@ -703,9 +651,7 @@ const SharedWithMe = () => {
             )}
 
 
-            {/* ==================================
-                RENAME MODAL
-            ================================== */}
+         
 
             {renameItem && (
 
@@ -804,9 +750,7 @@ const SharedWithMe = () => {
             )}
 
 
-            {/* ==================================
-                DELETE / REMOVE MODAL
-            ================================== */}
+       
 
             {deleteItem && (
 

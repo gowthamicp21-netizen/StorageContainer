@@ -19,7 +19,7 @@ const Login = () => {
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // Handle input changes
+   
     const handleChange = (e) => {
         setUser({
             ...user,
@@ -99,7 +99,7 @@ const Login = () => {
         }
     };
 
-    // Google Login
+  
     const handleGoogleLogin = () => {
 
         window.location.href =
@@ -212,7 +212,7 @@ const Login = () => {
                     </div>
 
 
-                    {/* Forgot Password */}
+                 
 
                     <div className="password-row">
 
@@ -226,7 +226,7 @@ const Login = () => {
                     </div>
 
 
-                    {/* Login Button */}
+                   
 
                     <button
                         type="submit"
@@ -244,15 +244,14 @@ const Login = () => {
                 </form>
 
 
-                {/* Divider */}
+                
 
                 <div className="divider">
                     <span>OR</span>
                 </div>
 
 
-                {/* Google Login */}
-
+              
                 <button
                     type="button"
                     className="google-btn"
@@ -268,7 +267,7 @@ const Login = () => {
                 </button>
 
 
-                {/* Create Account */}
+                
 
                 <div className="register-section">
 

@@ -173,7 +173,7 @@ const SharedFolder = () => {
             </div>
 
 
-            {/* Folder contents */}
+          
 
             <div className="shared-folder-content">
 
@@ -200,7 +200,7 @@ const SharedFolder = () => {
 
                     <div className="shared-folder-list">
 
-                        {/* Folders */}
+                     
 
                         {folders.map((childFolder) => (
 
