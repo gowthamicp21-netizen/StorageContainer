@@ -923,7 +923,7 @@ const handleDownload = async (fileId) => {
                                     </div>
                                 </div>
 
-        {/* Three dots */}
+       
                             <button
                                 className="storage-menu-button"
                                 onClick={(e) => {
@@ -934,7 +934,7 @@ const handleDownload = async (fileId) => {
                                 ⋮
                             </button>
 
-                    {/* Folder Menu */}
+                  
                     {openMenuId === folder.id &&
                         openMenuType === "folder" && (
 
@@ -1016,7 +1016,7 @@ const handleDownload = async (fileId) => {
 
         </div>
 
-        {/* Three dots */}
+       
         <button
             className="storage-menu-button"
             onClick={(e) => {

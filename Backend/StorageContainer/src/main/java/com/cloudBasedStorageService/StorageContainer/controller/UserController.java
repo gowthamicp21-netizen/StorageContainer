@@ -72,6 +72,7 @@ public class UserController {
 
     @PutMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody UserLoginInfo user){
+        System.out.println("Forgot password"+user.userEmail());
         userService.forgotPassword(user);
         return new ResponseEntity<>("Password reset successful",HttpStatus.OK);
     }

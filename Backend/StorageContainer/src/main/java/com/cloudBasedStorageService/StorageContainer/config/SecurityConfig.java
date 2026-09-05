@@ -99,14 +99,20 @@ public class SecurityConfig {
                         cors.configurationSource(corsConfigurationSource())
                 )
 
-                .authorizeHttpRequests(request -> request
+                .authorizeHttpRequests(auth -> auth
+
                         .requestMatchers(
                                 "/api/auth/register",
                                 "/api/auth/login",
+                                "/api/auth/forgot-password",
+                                "/api/auth/reset-password"
+                        ).permitAll()
+
+                        .requestMatchers(
                                 "/oauth2/**",
                                 "/login/**"
                         ).permitAll()
-                        .requestMatchers("/api/files","/api/folders").hasAnyRole("PUBLIC_USER", "ADMIN")
+
                         .anyRequest().authenticated()
                 )
 

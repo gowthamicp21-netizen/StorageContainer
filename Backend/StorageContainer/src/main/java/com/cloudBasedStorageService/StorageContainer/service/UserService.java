@@ -21,6 +21,7 @@ public class UserService {
     }
 
     public void forgotPassword(UserLoginInfo user) {
+        System.out.println("Forgot password");
         Optional<User> usr=userRepo.findByUserEmail(user.userEmail());
         usr.get().setUserPassword(user.userPassword());
         userRepo.save(usr.get());

@@ -115,6 +115,7 @@ const Login = () => {
                
 
                 <div className="login-logo">
+                    S
                     
                 </div>
 

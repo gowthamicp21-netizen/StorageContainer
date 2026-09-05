@@ -85,9 +85,6 @@ public class ShareService {
 
         for (Share share : shares) {
 
-            // ==============================
-            // FILE
-            // ==============================
 
             if (share.getItemType().equals(ItemType.FILE)) {
 

@@ -70,14 +70,7 @@ const Sidebar = ({ onNewFolder, onNewFile }) => {
                 🤝 Shared With Me
             </button>
 
-            <button className="sidebar-menu">
-                ⭐ Starred
-            </button>
-
-            <button className="sidebar-menu">
-                🕘 Recent
-            </button>
-
+            
             <div className="sidebar-bottom">
 
             <button
