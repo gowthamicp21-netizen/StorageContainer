@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/Login.css";
-import api from "../services/axiosConfig";
+import api, { API_BASE_URL, saveSession } from "../services/axiosConfig";
 
 const Login = () => {
 
@@ -47,19 +46,15 @@ const Login = () => {
         try {
 
             const response = await api.post(
-                "http://localhost:8080/api/auth/login",
+                "/api/auth/login",
                 user
             );
 
-            const token = response.data;
+            const token = response.data?.token;
 
             if (token) {
 
-                
-                localStorage.setItem("token", token);
-
-               
-                localStorage.setItem("userEmail", user.userEmail);
+                saveSession(token, user.userEmail);
 
                 setSuccess("Login successful!");
 
@@ -91,6 +86,7 @@ const Login = () => {
                     "Unable to connect to the server. Please make sure Spring Boot is running."
                 );
             } else {
+                
                 setError("Something went wrong.");
             }
 
@@ -102,8 +98,7 @@ const Login = () => {
   
     const handleGoogleLogin = () => {
 
-        window.location.href =
-            "http://localhost:8080/oauth2/authorization/google";
+        window.location.href = `${API_BASE_URL}/oauth2/authorization/google`;
     };
 
     return (
@@ -111,27 +106,16 @@ const Login = () => {
         <div className="login-page">
 
             <div className="login-card">
-
-               
-
                 <div className="login-logo">
                     S
                     
                 </div>
-
-
-              
-
                 <h1 className="login-title">
                     Welcome Back
                 </h1>
-
                 <p className="login-description">
-                    Sign in to continue to your quiz account
-                </p>
-
-
-               
+                    Sign in to continue to StorageContainer
+                </p>              
                 {error && (
                     <div className="login-error">
                         {error}

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import "../styles/Folder.css";
-import api from "../services/axiosConfig";
+import api, { apiErrorMessage } from "../services/axiosConfig";
 import Sidebar from "../pages/Sidebar";
 import ShareModal from "../pages/ShareModal";
 
@@ -230,8 +230,7 @@ const Folders = () => {
         console.error("Rename failed:", error);
 
         alert(
-            error.response?.data ||
-            "Failed to rename"
+            apiErrorMessage(error, "Failed to rename")
         );
 
     } finally {
@@ -277,8 +276,7 @@ const Folders = () => {
         console.error("File delete failed:", error);
 
         alert(
-            error.response?.data ||
-            "Failed to delete file"
+            apiErrorMessage(error, "Failed to delete file")
         );
 
     } finally {
@@ -376,8 +374,7 @@ const handleDeleteFolder = async () => {
         );
 
         alert(
-            error.response?.data ||
-            "Failed to delete folder"
+            apiErrorMessage(error, "Failed to delete folder")
         );
 
     } finally {
@@ -508,20 +505,10 @@ const createFolder = async () => {
 
         setCreatingFolder(true);
 
-       const folderData = {
-        folderName: trimmedName,
-        parentFolder: currentFolder
-        ? {
-            id: currentFolder.id
-        }
-        : null
-        };
-        console.log(folderData);
-
-        await api.post(
-            "/api/folders",
-            folderData
-        );
+        await api.post("/api/folders", {
+            folderName: trimmedName,
+            parentFolderId: currentFolder ? currentFolder.id : null
+        });
 
         setShowFolderModal(false);
         setNewFolderName("");
@@ -535,7 +522,7 @@ const createFolder = async () => {
             error
         );
 
-        alert("Failed to create folder.");
+        alert(apiErrorMessage(error, "Failed to create folder."));
 
     } finally {
 

@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Local-disk blob storage. Never commit uploaded user content.
+uploads/
+
+# Machine-local secrets: DB password, Google client secret, JWT signing key.
+# A bare name with no slash matches at any depth, so this covers the file whether
+# it sits next to pom.xml or under src/main/resources.
+application-local.properties

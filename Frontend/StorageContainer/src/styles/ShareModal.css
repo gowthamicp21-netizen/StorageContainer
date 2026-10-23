@@ -351,6 +351,176 @@
 
 
 
+.general-access {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 14px;
+
+    padding: 12px 13px;
+
+    border: 1px solid #e2e5e9;
+
+    border-radius: 11px;
+}
+
+.general-access-copy {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.general-access-copy strong {
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #30353b;
+}
+
+.general-access-copy small {
+    font-size: 11px;
+
+    color: #8b929d;
+}
+
+.link-create-btn,
+.link-off-btn {
+    flex-shrink: 0;
+
+    height: 34px;
+
+    padding: 0 14px;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.link-create-btn {
+    border: none;
+
+    background: #20242a;
+
+    color: #ffffff;
+}
+
+.link-create-btn:hover {
+    background: #111827;
+}
+
+.link-off-btn {
+    border: 1px solid #dfe3e8;
+
+    background: #ffffff;
+
+    color: #7a3b3b;
+}
+
+.link-off-btn:hover {
+    border-color: #c98c8c;
+
+    background: #fdf6f6;
+}
+
+.link-create-btn:disabled,
+.link-off-btn:disabled {
+    opacity: 0.55;
+
+    cursor: default;
+}
+
+
+
+.link-row {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    margin-bottom: 14px;
+}
+
+.link-url {
+    flex: 1;
+
+    min-width: 0;
+
+    height: 38px;
+
+    padding: 0 11px;
+
+    border: 1px solid #dfe3e8;
+
+    border-radius: 9px;
+
+    background: #f7f8fa;
+
+    font-size: 12px;
+
+    color: #4b5563;
+
+    outline: none;
+}
+
+.link-copy-btn {
+    flex-shrink: 0;
+
+    height: 38px;
+
+    padding: 0 14px;
+
+    border: 1px solid #dfe3e8;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #30353b;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.link-copy-btn:hover {
+    background: #f2f3f5;
+
+    border-color: #cfd4dc;
+}
+
+
+
+.share-error {
+    margin: -4px 0 14px;
+
+    font-size: 12px;
+
+    color: #b3261e;
+}
+
+.share-divider {
+    height: 1px;
+
+    margin: 4px 0 20px;
+
+    background: #edf0f3;
+}
+
+
 
 .share-modal-actions {
     display: flex;

@@ -1,0 +1,30 @@
+# ---------------------------------------------------------------------------
+# Template for application-local.properties.
+#
+# Copy this file to `application-local.properties` in the same directory (next to
+# pom.xml) and fill in real values. The copy is gitignored; this template is not,
+# so it is what a fresh clone reads to know which secrets it must supply.
+#
+# Alternatively, leave the file absent and set the equivalent environment variables
+# (DB_PASSWORD, GOOGLE_CLIENT_SECRET, JWT_SECRET) - application.properties reads the
+# same placeholders either way.
+#
+# Every value below is a placeholder. Never type a real credential into THIS file -
+# it is committed, so anything in it becomes public.
+# ---------------------------------------------------------------------------
+
+# PostgreSQL password for the user in spring.datasource.username.
+spring.datasource.password=CHANGE_ME
+
+# Google Cloud Console -> APIs & Services -> Credentials -> OAuth 2.0 Client IDs.
+# Must match the client id already in application.properties, and its Authorised
+# redirect URI must be http://localhost:8080/login/oauth2/code/google.
+spring.security.oauth2.client.registration.google.client-secret=CHANGE_ME
+
+# Base64 of at least 32 random bytes:  openssl rand -base64 32
+# Rotating this invalidates every issued token, which signs everyone out.
+app.jwt.secret=CHANGE_ME_BASE64_32_BYTES
+
+# Where uploaded files live. Forward slashes only - a .properties value treats
+# "\" as an escape.
+file.upload-dir=C:/path/to/LocalStorage

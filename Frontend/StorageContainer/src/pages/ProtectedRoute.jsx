@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import api from "../services/axiosConfig";
+import api, { clearSession } from "../services/axiosConfig";
 
 const ProtectedRoute = () => {
 
@@ -21,9 +21,7 @@ const ProtectedRoute = () => {
                 setAuthenticated(true);
             })
             .catch(() => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("userEmail");
-                localStorage.removeItem("role");
+                clearSession();
 
                 setAuthenticated(false);
             })

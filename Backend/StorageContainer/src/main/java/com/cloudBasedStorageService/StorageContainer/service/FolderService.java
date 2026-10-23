@@ -2,123 +2,95 @@ package com.cloudBasedStorageService.StorageContainer.service;
 
 import com.cloudBasedStorageService.StorageContainer.model.File;
 import com.cloudBasedStorageService.StorageContainer.model.Folder;
+import com.cloudBasedStorageService.StorageContainer.model.ItemType;
 import com.cloudBasedStorageService.StorageContainer.model.User;
+import com.cloudBasedStorageService.StorageContainer.model.dto.CreateFolderRequest;
 import com.cloudBasedStorageService.StorageContainer.repo.FileRepository;
 import com.cloudBasedStorageService.StorageContainer.repo.FolderRepository;
 import com.cloudBasedStorageService.StorageContainer.repo.UserRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cloudBasedStorageService.StorageContainer.util.Emails;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class FolderService {
 
-    @Autowired
-    private FolderRepository folderRepository;
+    private final FolderRepository folderRepository;
+    private final UserRepository userRepository;
+    private final FileRepository fileRepository;
+    private final ShareLinkService shareLinkService;
 
-    @Autowired
-    private UserRepository userRepository;
+    public FolderService(
+            FolderRepository folderRepository,
+            UserRepository userRepository,
+            FileRepository fileRepository,
+            ShareLinkService shareLinkService) {
 
-    @Autowired
-    private FileRepository fileRepository;
+        this.folderRepository = folderRepository;
+        this.userRepository = userRepository;
+        this.fileRepository = fileRepository;
+        this.shareLinkService = shareLinkService;
+    }
 
     public List<Folder> getRootFolders() {
 
-        String userEmail = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
-
-        User user = userRepository
-                .findByUserEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        return folderRepository.findByCreatedByAndParentFolderIsNull(user);
+        return folderRepository.findByCreatedByAndParentFolderIsNull(currentUser());
     }
 
-    public Folder saveFolder(Folder folder) {
+    public Folder saveFolder(CreateFolderRequest request) {
 
-        String userEmail = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
+        User user = currentUser();
 
-        User user = userRepository
-                .findByUserEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        Folder folder = new Folder();
 
+        folder.setFolderName(request.folderName().trim());
         folder.setCreatedBy(user);
+
+        if (request.parentFolderId() != null) {
+            folder.setParentFolder(requireOwnedFolder(request.parentFolderId(), user));
+        }
 
         return folderRepository.save(folder);
     }
 
     public List<Folder> getChildFolders(Integer parentFolderId) {
 
-        String userEmail = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
+        User user = currentUser();
 
-        User user = userRepository
-                .findByUserEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Folder parentFolder=folderRepository.findById(parentFolderId).get();
+        Folder parentFolder = requireOwnedFolder(parentFolderId, user);
 
-        return folderRepository.findByCreatedByAndParentFolder(
-                user,
-                parentFolder
-        );
+        return folderRepository.findByCreatedByAndParentFolder(user, parentFolder);
     }
 
-    public void deleteFolder(Integer folderId) {
-        Folder folder=folderRepository.findById(folderId).orElseThrow(() ->
-                new RuntimeException("Folder not found with id: " + folderId)
-        );
-        deleteFolderRecursively(folder);
-    }
+    /**
+     * Entry point is transactional so a failure partway through the tree cannot
+     * leave a half-deleted folder hierarchy behind. The returned storage keys are
+     * deleted from disk by the caller once this transaction commits, so an aborted
+     * delete never unlinks blobs that rows still point at.
+     */
     @Transactional
-    private void deleteFolderRecursively(Folder folder){
+    public List<String> deleteFolder(Integer folderId, User user) {
 
-        List<File> files = fileRepository.findByFolderId(folder.getId());
+        List<String> orphanedKeys = new ArrayList<>();
 
-        if (files != null && !files.isEmpty()) {
+        deleteFolderRecursively(requireOwnedFolder(folderId, user), orphanedKeys);
 
-            fileRepository.deleteAll(files);
-        }
-
-        List<Folder> subFolders =
-                folderRepository.findByParentFolder(folder);
-
-        for (Folder subFolder : subFolders) {
-
-            deleteFolderRecursively(subFolder);
-        }
-        folderRepository.delete(folder);
-
+        return orphanedKeys;
     }
-    public Folder renameFolder(
-            Integer folderId,
-            String newName,
-            User user) {
 
-        Folder folder = folderRepository.findById(folderId)
-                .orElseThrow(() ->
-                        new RuntimeException("Folder not found"));
+    public Folder renameFolder(Integer folderId, String newName, User user) {
 
-        if (!folder.getCreatedBy()
-                .getUserId()
-                .equals(user.getUserId())) {
-
-            throw new RuntimeException(
-                    "You do not have access to this folder");
-        }
+        Folder folder = requireOwnedFolder(folderId, user);
 
         if (newName == null || newName.trim().isEmpty()) {
-            throw new RuntimeException(
-                    "Folder name cannot be empty");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Folder name cannot be empty");
         }
 
         folder.setFolderName(newName.trim());
@@ -126,4 +98,50 @@ public class FolderService {
         return folderRepository.save(folder);
     }
 
+    private void deleteFolderRecursively(Folder folder, List<String> orphanedKeys) {
+
+        List<File> files = fileRepository.findByFolderId(folder.getId());
+
+        if (!files.isEmpty()) {
+            files.forEach(f -> {
+                orphanedKeys.add(f.getFilePath());
+                shareLinkService.revokeForItem(ItemType.FILE, f.getId());
+            });
+            fileRepository.deleteAll(files);
+        }
+
+        for (Folder subFolder : folderRepository.findByParentFolder(folder)) {
+            deleteFolderRecursively(subFolder, orphanedKeys);
+        }
+
+        shareLinkService.revokeForItem(ItemType.FOLDER, folder.getId());
+
+        folderRepository.delete(folder);
+    }
+
+    private Folder requireOwnedFolder(Integer folderId, User user) {
+
+        Folder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Folder not found"));
+
+        if (!folder.getCreatedBy().getUserId().equals(user.getUserId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "You do not have access to this folder");
+        }
+
+        return folder;
+    }
+
+    private User currentUser() {
+
+        String userEmail = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        return userRepository.findByUserEmail(Emails.normalize(userEmail))
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found"));
+    }
 }

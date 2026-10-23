@@ -2,7 +2,7 @@ package com.cloudBasedStorageService.StorageContainer.service;
 
 import com.cloudBasedStorageService.StorageContainer.model.User;
 import com.cloudBasedStorageService.StorageContainer.repo.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cloudBasedStorageService.StorageContainer.util.Emails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,27 +13,30 @@ import java.util.Optional;
 @Service
 public class MyUserDetailService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepo;
+    private final UserRepository userRepo;
+
+    public MyUserDetailService(UserRepository userRepo) {
+        this.userRepo = userRepo;
+    }
 
     @Override
-    public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
-       Optional<User> user=userRepo.findByUserEmail(userEmail);
+    public UserDetails loadUserByUsername(String userEmail)
+            throws UsernameNotFoundException {
 
-       System.out.println(userEmail);
+        Optional<User> user = userRepo.findByUserEmail(Emails.normalize(userEmail));
 
-        if(user.isEmpty()){
-            System.out.println("User not found");
-            throw new UsernameNotFoundException(userEmail);
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException("User not found");
         }
 
-        return org.springframework.security.core.userdetails.User.
-                withUsername(user.get().getUserEmail())
-                .password(user.get().getUserPassword())
-                .authorities("ROLE_"+user.get().getUserRole().name())
+        User found = user.get();
+
+        return org.springframework.security.core.userdetails.User
+                .withUsername(found.getUserEmail())
+                .password(found.getUserPassword() == null ? "" : found.getUserPassword())
+                .authorities("ROLE_" + (found.getUserRole() == null
+                        ? com.cloudBasedStorageService.StorageContainer.model.Role.PUBLIC_USER.name()
+                        : found.getUserRole().name()))
                 .build();
-
-
-
     }
 }

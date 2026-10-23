@@ -1,5 +1,6 @@
 package com.cloudBasedStorageService.StorageContainer.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,6 +18,9 @@ public class User {
     @Column(unique = true,nullable = false)
     private String userEmail;
 
+    // File and folder responses embed the createdBy relation, so the hash must
+    // never be part of JSON in either direction.
+    @JsonIgnore
     @Column(nullable = true)
     private String userPassword;
 

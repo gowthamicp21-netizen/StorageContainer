@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import axios from "axios";
 import '../styles/Register.css';
-import api from "../services/axiosConfig";
+import api, { apiErrorMessage } from "../services/axiosConfig";
 
 const Register = () => {
     const [user, setUser] = useState({
         userEmail: "",
-        userPassword: "",
-        userRole: "PUBLIC_USER"
+        userPassword: ""
     });
 
     const handleChange = (e) => {
@@ -21,28 +19,20 @@ const Register = () => {
         e.preventDefault();
 
         try {
-            console.log(user);
-            const response = await api.post(
-                "/api/auth/register",
-                user
-            );
+            await api.post("/api/auth/register", {
+                userEmail: user.userEmail,
+                userPassword: user.userPassword
+            });
 
             alert("Registration successful!");
 
-            console.log(response.data);
-
             setUser({
                 userEmail: "",
-                userPassword: "",
-                userRole: "PUBLIC_USER"
+                userPassword: ""
             });
 
         } catch (error) {
-            console.error(error);
-            alert(
-                error.response?.data?.message ||
-                "Registration failed"
-            );
+            alert(apiErrorMessage(error, "Registration failed"));
         }
     };
 

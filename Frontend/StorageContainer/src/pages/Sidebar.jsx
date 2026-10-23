@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import "../styles/Sidebar.css";
 import { useNavigate } from "react-router-dom";
+import { clearSession } from "../services/axiosConfig";
 
 const Sidebar = ({ onNewFolder, onNewFile }) => {
 
@@ -27,8 +28,7 @@ const Sidebar = ({ onNewFolder, onNewFile }) => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        clearSession();
 
         navigate("/login");
     };

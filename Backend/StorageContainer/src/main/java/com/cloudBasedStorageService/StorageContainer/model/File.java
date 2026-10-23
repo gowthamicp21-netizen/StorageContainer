@@ -26,8 +26,10 @@ public class File {
     @Column(nullable = false)
     private String fileType;
 
+    // nullable so uploads that are not given a folderId land in the root listing
+    // instead of violating the column and failing with a 500.
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "folder_id", nullable = false)
+    @JoinColumn(name = "folder_id")
     private Folder folder;
 
     @ManyToOne(fetch = FetchType.LAZY)

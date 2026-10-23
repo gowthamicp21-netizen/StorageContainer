@@ -1,4 +1,10 @@
 package com.cloudBasedStorageService.StorageContainer.model.dto;
 
-public record UserLoginInfo(String userEmail,String userPassword) {
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
+public record UserLoginInfo(
+        @NotBlank @Email String userEmail,
+        @NotBlank String userPassword
+) {
 }

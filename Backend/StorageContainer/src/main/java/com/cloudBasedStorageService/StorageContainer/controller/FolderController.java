@@ -2,11 +2,12 @@ package com.cloudBasedStorageService.StorageContainer.controller;
 
 import com.cloudBasedStorageService.StorageContainer.model.Folder;
 import com.cloudBasedStorageService.StorageContainer.model.User;
+import com.cloudBasedStorageService.StorageContainer.model.dto.CreateFolderRequest;
+import com.cloudBasedStorageService.StorageContainer.service.FileStorageService;
 import com.cloudBasedStorageService.StorageContainer.service.FolderService;
 import com.cloudBasedStorageService.StorageContainer.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,11 +19,19 @@ import java.util.List;
 @RequestMapping("/api/folders")
 public class FolderController {
 
-    @Autowired
-    private FolderService folderService;
+    private final FolderService folderService;
+    private final UserService userService;
+    private final FileStorageService fileStorageService;
 
-    @Autowired
-    private UserService userService;
+    public FolderController(
+            FolderService folderService,
+            UserService userService,
+            FileStorageService fileStorageService) {
+
+        this.folderService = folderService;
+        this.userService = userService;
+        this.fileStorageService = fileStorageService;
+    }
 
     @GetMapping("/root")
     public List<Folder> getRootFolders() {
@@ -30,67 +39,41 @@ public class FolderController {
     }
 
     @PutMapping("/folder/{folderId}/rename")
-    public ResponseEntity<?> renameFolder(
+    public Folder renameFolder(
             @PathVariable Integer folderId,
             @RequestParam String newName) {
 
-        try {
-            Folder folder = folderService.renameFolder(
-                    folderId,
-                    newName,
-                    getLoggedInUser()
-            );
-
-            return ResponseEntity.ok(folder);
-
-        } catch (Exception e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
+        return folderService.renameFolder(folderId, newName, getLoggedInUser());
     }
+
     @PostMapping
-    public ResponseEntity<?> saveFolder(@RequestBody Folder folder){
-        System.out.println(folder.getFolderName());
-        folderService.saveFolder(folder);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Successfully saved folder");
+    @ResponseStatus(HttpStatus.CREATED)
+    public Folder saveFolder(@Valid @RequestBody CreateFolderRequest request) {
+
+        return folderService.saveFolder(request);
     }
 
     @GetMapping("/{folderId}/children")
-    public List<Folder> getChildFolders(
-            @PathVariable Integer folderId) {
+    public List<Folder> getChildFolders(@PathVariable Integer folderId) {
 
         return folderService.getChildFolders(folderId);
     }
 
-    @DeleteMapping("{folderId}")
-    public ResponseEntity<?> deleteFolder(@PathVariable Integer folderId){
+    @DeleteMapping("/{folderId}")
+    public ResponseEntity<Void> deleteFolder(@PathVariable Integer folderId) {
 
-        try {
+        // Unlink the blobs only after the row transaction committed, otherwise a
+        // rolled back delete would leave files pointing at missing content.
+        folderService.deleteFolder(folderId, getLoggedInUser())
+                .forEach(fileStorageService::delete);
 
-            folderService.deleteFolder(folderId);
-
-            return ResponseEntity.ok(
-                    "Folder deleted successfully"
-            );
-
-        } catch (RuntimeException e) {
-
-            return ResponseEntity
-                    .badRequest()
-                    .body(e.getMessage());
-        }
+        return ResponseEntity.noContent().build();
     }
 
     private User getLoggedInUser() {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
 
-        User user = userService.getUserByUsername(userEmail);
-        return user;
+        return userService.getUserByUsername(authentication.getName());
     }
-
-
 }

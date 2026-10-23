@@ -56,21 +56,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
                                 SecurityContextHolder.getContext()
                                         .setAuthentication(authentication);
-
-                                System.out.println(
-                                        "JWT USER: " + userEmail
-                                );
-
-                                System.out.println(
-                                        "JWT AUTHORITIES: " +
-                                                userDetails.getAuthorities()
-                                );
-
                             }
                 }
             }
             catch(Exception e){
-                System.out.println("JWT validation failed: " + e.getMessage());
+                logger.debug("JWT validation failed: " + e.getMessage());
             }
         }
 

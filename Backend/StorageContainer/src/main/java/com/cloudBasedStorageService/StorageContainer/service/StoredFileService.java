@@ -9,10 +9,12 @@ import com.cloudBasedStorageService.StorageContainer.model.dto.FileDownloadRespo
 import com.cloudBasedStorageService.StorageContainer.repo.FolderRepository;
 import com.cloudBasedStorageService.StorageContainer.repo.FileRepository;
 import com.cloudBasedStorageService.StorageContainer.repo.ShareRepository;
+import com.cloudBasedStorageService.StorageContainer.util.Emails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
+import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
@@ -21,15 +23,16 @@ public class StoredFileService {
 
     private final FileRepository storedFileRepository;
     private final FolderRepository folderRepository;
-    private final SupabaseStorageService supabaseStorageService;
+    private final FileStorageService fileStorageService;
     private final ShareRepository shareRepository;
     private final ShareService shareService;
+    private final ShareLinkService shareLinkService;
 
     public File uploadFile(
             MultipartFile file,
             Integer folderId,
             User user
-    ) throws Exception {
+    ) {
 
 
         Folder folder = null;
@@ -39,8 +42,8 @@ public class StoredFileService {
             folder = folderRepository
                     .findById(folderId)
                     .orElseThrow(() ->
-                            new RuntimeException(
-                                    "Folder not found"
+                            new ResponseStatusException(
+                                    HttpStatus.NOT_FOUND, "Folder not found"
                             )
                     );
 
@@ -48,13 +51,12 @@ public class StoredFileService {
                     .getUserId()
                     .equals(user.getUserId())) {
 
-                throw new RuntimeException(
-                        "You do not have access to this folder"
-                );
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN, "You do not have access to this folder");
             }
         }
 
-        String filePath = supabaseStorageService.uploadFile( file, user.getUserId());
+        String filePath = fileStorageService.store(file, user.getUserId());
 
         File storedFile = new File();
 
@@ -76,9 +78,13 @@ public class StoredFileService {
 
         storedFile.setCreatedBy(user);
 
-        return storedFileRepository.save(
-                storedFile
-        );
+        try {
+            return storedFileRepository.save(storedFile);
+        } catch (RuntimeException e) {
+            // No row means nothing can ever point at the blob, so it would leak.
+            fileStorageService.delete(filePath);
+            throw e;
+        }
     }
 
 
@@ -97,17 +103,16 @@ public class StoredFileService {
         Folder folder = folderRepository
                 .findById(folderId)
                 .orElseThrow(() ->
-                        new RuntimeException(
-                                "Folder not found"
-                        )
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND, "Folder not found")
                 );
 
         if (!folder.getCreatedBy()
                 .getUserId()
                 .equals(user.getUserId())) {
 
-            throw new RuntimeException(
-                    "You do not have access to this folder"
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "You do not have access to this folder"
             );
         }
 
@@ -120,74 +125,30 @@ public class StoredFileService {
 
     public FileDownloadResponse downloadFile(int fileId, User user) {
 
-        File file = storedFileRepository.findById(fileId)
-                .orElseThrow(() ->
-                        new RuntimeException("File not found")
-                );
-
-
-        boolean isOwner =
-                file.getCreatedBy().getUserId()
-                        .equals(user.getUserId());
-
-
-        boolean hasDirectShare =
-                shareRepository
-                        .findByEmailAndItemIdAndItemType(
-                                user.getUserEmail(),
-                                fileId,
-                                ItemType.FILE
-                        )
-                        .isPresent();
-
-
-        boolean hasFolderShare = false;
-
-        if (file.getFolder() != null) {
-
-            hasFolderShare =
-                    shareRepository
-                            .findByEmailAndItemIdAndItemType(
-                                    user.getUserEmail(),
-                                    file.getFolder().getId(),
-                                    ItemType.FOLDER
-                            )
-                            .isPresent();
-        }
-
-
-        if (!isOwner && !hasDirectShare && !hasFolderShare) {
-
-            throw new RuntimeException(
-                    "You do not have access to this file"
-            );
-        }
-
-
-        String filePath = file.getFilePath();
-
-        byte[] fileData =
-                supabaseStorageService.downloadFile(filePath);
+        File file = requireReadableFile(fileId, user);
 
         return new FileDownloadResponse(
                 file.getFileName(),
                 file.getFileType(),
-                fileData
+                fileStorageService.resolve(file.getFilePath())
         );
     }
 
     public void deleteFile(int fileId, User user) {
         File file = storedFileRepository.findById(fileId)
                 .orElseThrow(() ->
-                        new RuntimeException("File not found")
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found")
                 );
         if(!file.getCreatedBy().getUserId().equals(user.getUserId())){
-            throw new RuntimeException(
-                    "You do not have access to this file"
-            );
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "You do not have access to this file");
         }
-        supabaseStorageService.deleteFile(file);
         storedFileRepository.delete(file);
+        fileStorageService.delete(file.getFilePath());
+
+        // A link outlives nothing: without this the revoked-by-deletion file would
+        // still be advertised by the share row, and an id reuse would expose content.
+        shareLinkService.revokeForItem(ItemType.FILE, file.getId());
 
     }
 
@@ -198,19 +159,19 @@ public class StoredFileService {
 
         File file = storedFileRepository.findById(fileId)
                 .orElseThrow(() ->
-                        new RuntimeException("File not found"));
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found"));
 
         if (!file.getCreatedBy()
                 .getUserId()
                 .equals(user.getUserId())) {
 
-            throw new RuntimeException(
-                    "You do not have access to this file");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "You do not have access to this file");
         }
 
         if (newName == null || newName.trim().isEmpty()) {
-            throw new RuntimeException(
-                    "File name cannot be empty");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "File name cannot be empty");
         }
 
         file.setFileName(newName.trim());
@@ -220,50 +181,43 @@ public class StoredFileService {
 
     public FileDownloadResponse viewFile(int fileId, User user) {
 
-        File file = storedFileRepository.findById(fileId)
-                .orElseThrow(() ->
-                        new RuntimeException("File not found")
-                );
-
-        boolean isOwner =
-                file.getCreatedBy().getUserId()
-                        .equals(user.getUserId());
-
-        boolean hasDirectShare =
-                shareRepository
-                        .findByEmailAndItemIdAndItemType(
-                                user.getUserEmail(),
-                                fileId,
-                                ItemType.FILE
-                        )
-                        .isPresent();
-
-        boolean hasFolderShare = false;
-
-        if (file.getFolder() != null) {
-
-            hasFolderShare =
-                    shareService.hasFolderAccess(
-                            file.getFolder().getId(),
-                            user.getUserEmail()
-                    );
-        }
-
-        if (!isOwner && !hasDirectShare && !hasFolderShare) {
-            throw new RuntimeException(
-                    "You do not have access to this file"
-            );
-        }
-
-        String filePath = file.getFilePath();
-
-        byte[] fileData =
-                supabaseStorageService.downloadFile(filePath);
+        File file = requireReadableFile(fileId, user);
 
         return new FileDownloadResponse(
                 file.getFileName(),
                 file.getFileType(),
-                fileData
+                fileStorageService.resolve(file.getFilePath())
         );
+    }
+
+    /**
+     * Download and view previously disagreed on whether a share inherited from an
+     * ancestor folder counted, so both now go through this one check.
+     */
+    private File requireReadableFile(int fileId, User user) {
+
+        File file = storedFileRepository.findById(fileId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "File not found"));
+
+        if (file.getCreatedBy().getUserId().equals(user.getUserId())) {
+            return file;
+        }
+
+        String email = Emails.normalize(user.getUserEmail());
+
+        boolean sharedDirectly = shareRepository
+                .findByEmailAndItemIdAndItemType(email, fileId, ItemType.FILE)
+                .isPresent();
+
+        boolean sharedViaFolder = file.getFolder() != null
+                && shareService.hasFolderAccess(file.getFolder().getId(), email);
+
+        if (!sharedDirectly && !sharedViaFolder) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "You do not have access to this file");
+        }
+
+        return file;
     }
 }

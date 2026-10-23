@@ -1,37 +1,38 @@
-import React, { useState } from "react";
-import axios from "axios";
-import '../styles/ForgotPassword.css';
-import api from "../services/axiosConfig";
+import { useState } from "react";
+import "../styles/ForgotPassword.css";
+import api, { apiErrorMessage } from "../services/axiosConfig";
 
 function ForgotPassword() {
 
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
-    const [password ,setPassword]=useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
 
         e.preventDefault();
 
+        setMessage("");
+        setError("");
+
         try {
 
-            const response = await api.put(
+            setLoading(true);
+
+            const response = await api.post(
                 "/api/auth/forgot-password",
-                {
-                    user_email: email,
-                    user_password:password
-                }
+                { userEmail: email }
             );
 
-            setMessage(response.data);
+            setMessage(response.data.message);
 
-        } catch (error) {
+        } catch (err) {
 
-            console.error(error);
+            setError(apiErrorMessage(err, "Unable to process your request."));
 
-            setMessage(
-                "Unable to process your request."
-            );
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -43,40 +44,26 @@ function ForgotPassword() {
                 <h2>Forgot Password?</h2>
 
                 <p>
-                    Enter your registered email address
-                    to reset your password.
+                    Enter your registered email address and we will send you a
+                    link to choose a new password.
                 </p>
 
                 <form onSubmit={handleSubmit}>
 
-                    <label>Email Address</label>
+                    <label htmlFor="email">Email Address</label>
 
                     <input
+                        id="email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter your email"
+                        autoComplete="email"
                         required
                     />
 
-
-                     <div className="form-group">
-                    <label htmlFor="password">Password</label>
-
-                    <input
-                         type="password"
-                        id="password"
-                        name="password"
-                        value={password}
-                        onChange={(e)=>setPassword(e.target.value)}
-                        placeholder="Create a password"
-                    />
-          </div>
-
-         
-
-                    <button type="submit">
-                        Password Reset
+                    <button type="submit" disabled={loading}>
+                        {loading ? "Sending..." : "Send reset link"}
                     </button>
 
                 </form>
@@ -84,6 +71,12 @@ function ForgotPassword() {
                 {message && (
                     <p className="forgot-message">
                         {message}
+                    </p>
+                )}
+
+                {error && (
+                    <p className="forgot-message" role="alert">
+                        {error}
                     </p>
                 )}
 

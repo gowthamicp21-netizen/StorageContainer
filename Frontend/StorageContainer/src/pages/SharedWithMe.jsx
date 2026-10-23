@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import api from "../services/axiosConfig";
+import api, { apiErrorMessage } from "../services/axiosConfig";
 import "../styles/SharedWithMe.css";
 
 const SharedWithMe = () => {
@@ -283,8 +283,7 @@ const SharedWithMe = () => {
             } else {
 
                 alert(
-                    error.response?.data ||
-                    "Failed to rename item."
+                    apiErrorMessage(error, "Failed to rename item.")
                 );
             }
 
@@ -387,8 +386,7 @@ const SharedWithMe = () => {
             } else {
 
                 alert(
-                    error.response?.data ||
-                    "Failed to remove shared item."
+                    apiErrorMessage(error, "Failed to remove shared item.")
                 );
             }
 
